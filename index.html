@@ -242,21 +242,20 @@
         </div>
     </div>
 
-    <!-- SCRIPT DO FIREBASE COMPLETO -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO SEU FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyAs8...", // Suas credenciais reais já configuradas mantêm-se aqui
-            authDomain: "controladovendas.firebaseapp.com",
-            projectId: "controladovendas",
-            storageBucket: "controladovendas.firebasestorage.app",
-            messagingSenderId: "1056581414436",
-            appId: "1:1056581414436:web:12fcb24cf0ff0ba8e45dc1"
-        };
+  // CONFIGURAÇÃO DO SEU FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQ2YjCv6HLZVJXisieJGbEwkAjCMj1GVE",
+    authDomain: "controle-de-vendas-7b024.firebaseapp.com",
+    projectId: "controle-de-vendas-7b024",
+    storageBucket: "controle-de-vendas-7b024.firebasestorage.app",
+    messagingSenderId: "639512528905",
+    appId: "1:639512528905:web:530e5755abd1cebba050d8"
+  };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
