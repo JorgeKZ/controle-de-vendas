@@ -13,6 +13,12 @@
         .brand-green { color: #0f766e; }
         .bg-brand-green { background-color: #0f766e; }
         .bg-brand-green:hover { background-color: #115e59; }
+        
+        /* Cores dinâmicas para os selects de status idênticas aos botões */
+        .status-qualificacao { background-color: #2563eb; color: #ffffff; font-weight: 600; }
+        .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
+        .status-conquista { background-color: #047857; color: #ffffff; font-weight: 600; }
+        .status-recusado { background-color: #e11d48; color: #ffffff; font-weight: 600; }
     </style>
 </head>
 <body class="p-4 md:p-8 text-slate-800">
@@ -92,7 +98,7 @@
                 <div id="metric-negociacao" class="text-2xl font-extrabold text-amber-600 mt-1">0</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-emerald-600 uppercase">Convertidos</span>
+                <span class="text-xs font-bold text-emerald-600 uppercase">Conquistas</span>
                 <div id="metric-convertidos" class="text-2xl font-extrabold text-emerald-600 mt-1">0</div>
             </div>
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
@@ -108,7 +114,7 @@
         <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO + TABELA DE LEADS) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             
-            <!-- FORMULÁRIO DE CADASTRO ORIGINAL -->
+            <!-- FORMULÁRIO DE CADASTRO -->
             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-fit">
                 <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Novo lead e agendamento</h2>
                 <form id="form-lead" class="space-y-4 text-sm">
@@ -125,6 +131,10 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Empresa</label>
                         <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Endereço do Lead</label>
+                        <input type="text" id="lead-endereco" placeholder="Ex: Av. Paulista, 1000 - São Paulo" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -146,7 +156,7 @@
                             <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                                 <option value="Qualificação">Qualificação</option>
                                 <option value="Em Negociação">Em Negociação</option>
-                                <option value="Convertido">Convertido</option>
+                                <option value="Conquista">Conquista</option>
                                 <option value="Recusado">Recusado</option>
                             </select>
                         </div>
@@ -182,18 +192,27 @@
 
             <!-- TABELA: CONTROLE DE VENDAS ORIGINAL -->
             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 overflow-x-auto">
-                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 border-b pb-4">
                     <div class="flex items-center gap-2">
                         <h2 class="text-xl font-bold text-slate-800">Controle de vendas</h2>
                         <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full"><span id="count-conquistas">0</span> conquistas</span>
                     </div>
                     <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
                 </div>
+
+                <!-- 4 BOTÕES DE FILTROS DE STATUS CORRIGIDOS -->
+                <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
+                    <button id="btn-filtro-todos" class="px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition">Todos</button>
+                    <button id="btn-filtro-conquistas" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-emerald-700 hover:bg-slate-50 transition"><i class="fa-solid fa-trophy"></i> Conquista</button>
+                    <button id="btn-filtro-negociacoes" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-amber-700 hover:bg-slate-50 transition"><i class="fa-solid fa-comments"></i> Em Negociação</button>
+                    <button id="btn-filtro-qualificacao" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-blue-700 hover:bg-slate-50 transition"><i class="fa-solid fa-magnifying-glass"></i> Qualificação</button>
+                    <button id="btn-filtro-recusados" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-rose-700 hover:bg-slate-50 transition"><i class="fa-solid fa-circle-xmark"></i> Recusados</button>
+                </div>
                 
                 <table class="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                         <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                            <th class="p-3">Lead / Empresa</th>
+                            <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
                             <th class="p-3">Valor</th>
                             <th class="p-3">Data</th>
                             <th class="p-3">Status</th>
@@ -215,10 +234,13 @@
                     <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Em negociação: R$ <span id="val-em-negociacao">0,00</span></span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <select id="filtro-agenda-dias" class="border rounded px-2 py-1 text-xs">
-                        <option value="Todos">Todos os dias</option>
-                        <option value="Hoje">Hoje</option>
-                        <option value="Amanhã">Amanhã</option>
+                    <!-- SELETOR DA AGENDA POR MÊS -->
+                    <select id="filtro-agenda-mes" class="border rounded px-2 py-1 text-xs">
+                        <option value="Todos">Todos os meses</option>
+                        <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+                        <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+                        <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+                        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                     </select>
                     <button id="btn-exportar-agenda" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
                 </div>
@@ -242,20 +264,74 @@
         </div>
     </div>
 
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- MODAL PARA EXIBIR TODOS OS DADOS INDIVIDUAIS DO CLIENTE -->
+    <div id="modal-detalhes" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative">
+            <button id="btn-fechar-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-900 mb-4 border-b pb-2"><i class="fa-solid fa-address-card brand-green"></i> Ficha Completa do Lead</h3>
+            
+            <div class="space-y-3 text-sm">
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Nome:</span>
+                    <span id="modal-nome" class="col-span-2 font-bold text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">CPF/CNPJ:</span>
+                    <span id="modal-doc" class="col-span-2 text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Empresa:</span>
+                    <span id="modal-empresa" class="col-span-2 text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Endereço Lead:</span>
+                    <span id="modal-lead-endereco" class="col-span-2 text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">WhatsApp:</span>
+                    <span id="modal-whats" class="col-span-2 text-teal-700 font-medium"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Valor Estimado:</span>
+                    <span id="modal-valor" class="col-span-2 font-bold text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Data Cadastro:</span>
+                    <span id="modal-data" class="col-span-2 text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
+                    <span class="font-semibold text-slate-500">Status Atual:</span>
+                    <span id="modal-status" class="col-span-2 px-2 py-0.5 rounded text-xs w-fit"></span>
+                </div>
+                
+                <div id="modal-box-visita" class="bg-slate-50 p-3 rounded-lg border border-dashed mt-4 hidden">
+                    <h4 class="font-bold text-xs text-slate-600 uppercase tracking-wider mb-2"><i class="fa-solid fa-calendar-days"></i> Detalhes da Visita Agendada</h4>
+                    <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
+                    <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
+                </div>
+            </div>
+            
+            <button id="btn-modal-ok" class="w-full bg-slate-800 text-white font-bold py-2 rounded-xl mt-6 hover:bg-slate-700 transition">Fechar</button>
+        </div>
+    </div>
 
-  // CONFIGURAÇÃO DO SEU FIREBASE
-  const firebaseConfig = {
-    apiKey: "AIzaSyAQ2YjCv6HLZVJXisieJGbEwkAjCMj1GVE",
-    authDomain: "controle-de-vendas-7b024.firebaseapp.com",
-    projectId: "controle-de-vendas-7b024",
-    storageBucket: "controle-de-vendas-7b024.firebasestorage.app",
-    messagingSenderId: "639512528905",
-    appId: "1:639512528905:web:530e5755abd1cebba050d8"
-  };
+    <!-- SCRIPT DO FIREBASE COMPLETO -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIGURAÇÃO REAL DO SEU FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQ2YjCv6HLZVJXisieJGbEwkAjCMj1GVE",
+            authDomain: "controle-de-vendas-7b024.firebaseapp.com",
+            projectId: "controle-de-vendas-7b024",
+            storageBucket: "controle-de-vendas-7b024.firebasestorage.app",
+            messagingSenderId: "639512528905",
+            appId: "1:639512528905:web:530e5755abd1cebba050d8"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -264,7 +340,9 @@
         // ESTADOS E CONTROLES DA TELA
         let usuarioAtual = null;
         let listaLeads = [];
-        let modoCadastro = 'login'; // 'login' ou 'cadastro'
+        let modoCadastro = 'login';
+        let filtroStatusAtual = 'Todos';
+        let tempoInatividade;
 
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
@@ -293,12 +371,38 @@
             return `${partes[2]}/${partes[1]}/${partes[0]}`;
         }
 
-        // CONTROLE DO CHECKBOX DE AGENDAMENTO
+        // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR Exactamente as cores dos filtros
+        function obterClasseStatus(status) {
+            if (status === 'Qualificação') return 'status-qualificacao';
+            if (status === 'Em Negociação') return 'status-negociacao';
+            if (status === 'Conquista') return 'status-conquista';
+            if (status === 'Recusado') return 'status-recusado';
+            return '';
+        }
+
+        // CONDICIONAL DE INATIVIDADE (MAIS DE 10 MINUTOS)
+        function resetarTimerInatividade() {
+            clearTimeout(tempoInatividade);
+            if (usuarioAtual) {
+                tempoInatividade = setTimeout(() => {
+                    alert("Você foi deslogado por inatividade (mais de 10 minutos sem mexer no sistema).");
+                    signOut(auth);
+                }, 600000);
+            }
+        }
+
+        window.onload = resetarTimerInatividade;
+        document.onmousemove = resetarTimerInatividade;
+        document.onkeydown = resetarTimerInatividade;
+        document.onmousedown = resetarTimerInatividade;
+        document.ontouchstart = resetarTimerInatividade;
+        document.onclick = resetarTimerInatividade;
+        document.onscroll = resetarTimerInatividade;
+
         chkAgendar.addEventListener('change', (e) => {
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
         });
 
-        // ALTERNAR TELA LOGIN / CADASTRO
         document.getElementById('btn-alternar-auth').addEventListener('click', () => {
             const btnPrincipal = document.getElementById('btn-auth-principal');
             const linkAlternar = document.getElementById('btn-alternar-auth');
@@ -313,12 +417,10 @@
             }
         });
 
-        // FORMULÁRIO DE AUTENTICAÇÃO
         document.getElementById('auth-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const senha = document.getElementById('auth-senha').value;
-
             try {
                 if(modoCadastro === 'login') {
                     await signInWithEmailAndPassword(auth, email, senha);
@@ -330,10 +432,8 @@
             }
         });
 
-        // LOGOUT
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
-        // DETECTAR ESTADO DO USUÁRIO
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 usuarioAtual = user;
@@ -342,8 +442,10 @@
                 appContainer.classList.remove('hidden');
                 definirDataHoje();
                 ouvirDadosDoFirestore();
+                resetarTimerInatividade();
             } else {
                 usuarioAtual = null;
+                clearTimeout(tempoInatividade);
                 appContainer.classList.add('hidden');
                 authContainer.classList.remove('hidden');
             }
@@ -354,10 +456,8 @@
             document.getElementById('lead-data').value = hoje;
         }
 
-        // CONEXÃO REAL-TIME COM FIRESTORE
         function ouvirDadosDoFirestore() {
             const q = query(collection(db, "leads"), where("uid", "==", usuarioAtual.uid));
-            
             onSnapshot(q, (snapshot) => {
                 listaLeads = [];
                 snapshot.forEach((docSnap) => {
@@ -366,44 +466,70 @@
                 renderizarDashboard();
             }, (error) => {
                 console.error("Erro Firestore: ", error);
-                alert("Erro ao sincronizar dados. Verifique a criação de índices caso apareça erro no console.");
+                alert("Erro ao sincronizar dados.");
             });
         }
 
-        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE ORIGINAL
+        // INTERFACE DO CLIQUE DOS BOTÕES DE FILTRO DE STATUS (Unificado para 'Conquista')
+        function configurarFiltrosStatus() {
+            const botoes = {
+                'Todos': document.getElementById('btn-filtro-todos'),
+                'Conquista': document.getElementById('btn-filtro-conquistas'),
+                'Em Negociação': document.getElementById('btn-filtro-negociacoes'),
+                'Qualificação': document.getElementById('btn-filtro-qualificacao'),
+                'Recusado': document.getElementById('btn-filtro-recusados')
+            };
+
+            Object.keys(botoes).forEach(status => {
+                botoes[status].addEventListener('click', () => {
+                    filtroStatusAtual = status;
+                    Object.keys(botoes).forEach(s => {
+                        botoes[s].className = "px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition";
+                    });
+                    if (status === 'Todos') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition";
+                    else if (status === 'Conquista') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-emerald-700 text-white transition";
+                    else if (status === 'Em Negociação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-amber-600 text-white transition";
+                    else if (status === 'Qualificação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-blue-600 text-white transition";
+                    else if (status === 'Recusado') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-rose-600 text-white transition";
+                    renderizarDashboard();
+                });
+            });
+        }
+        configurarFiltrosStatus();
+
+        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE
         function renderizarDashboard() {
-            // Filtros da interface
             const fDia = document.getElementById('filtro-dia').value;
             const fMes = document.getElementById('filtro-mes').value;
             const fAno = document.getElementById('filtro-ano').value;
 
-            // Filtrar Leads
-            const leadsFiltrados = listaLeads.filter(l => {
+            // FILTRAGEM DO CONTROLE DE VENDAS
+            const leadsControleFiltrados = listaLeads.filter(l => {
                 if(!l.dataCadastro) return true;
                 const [ano, mes, dia] = l.dataCadastro.split('-');
                 if(fDia && parseInt(fDia) !== parseInt(dia)) return false;
                 if(fMes !== 'Todos' && fMes !== mes) return false;
                 if(fAno && parseInt(fAno) !== parseInt(ano)) return false;
+                if(filtroStatusAtual !== 'Todos' && l.status !== filtroStatusAtual) return false;
                 return true;
             });
 
-            // Métricas
-            let totalLeads = leadsFiltrados.length;
+            // Métricas calculadas em cima de TODOS os leads gerais do usuário
+            let totalLeads = listaLeads.length;
             let emNegociacao = 0;
             let totalNegociacaoValor = 0;
             let convertidos = 0;
             let recusados = 0;
 
-            leadsFiltrados.forEach(l => {
+            listaLeads.forEach(l => {
                 const val = parseFloat(l.valor) || 0;
                 if(l.status === 'Em Negociação') { emNegociacao++; totalNegociacaoValor += val; }
-                else if(l.status === 'Convertido') { convertidos++; }
+                else if(l.status === 'Conquista') { convertidos++; }
                 else if(l.status === 'Recusado') { recusados++; }
             });
 
             const taxaConversao = totalLeads > 0 ? Math.round((convertidos / totalLeads) * 100) : 0;
 
-            // Renderizar Métricas nos Cards Originais
             document.getElementById('metric-leads').textContent = totalLeads;
             document.getElementById('metric-negociacao').textContent = emNegociacao;
             document.getElementById('metric-convertidos').textContent = convertidos;
@@ -416,22 +542,29 @@
             const tbodyLeads = document.getElementById('tbody-leads');
             tbodyLeads.innerHTML = '';
 
-            leadsFiltrados.forEach(l => {
+            leadsControleFiltrados.forEach(l => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
+                
+                const classeCorStatus = obterClasseStatus(l.status);
+
                 tr.innerHTML = `
                     <td class="p-3">
-                        <div class="font-bold text-slate-800">${l.nome}</div>
-                        <div class="text-xs text-slate-400">${l.empresa || l.documento || 'Sem empresa'}</div>
+                        <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
+                            <div class="font-bold text-slate-800 hover:text-teal-700 hover:underline cursor-pointer flex items-center gap-1.5">
+                                <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
+                            </div>
+                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
+                        </button>
                     </td>
                     <td class="p-3 font-semibold text-slate-700">${formatarMoeda(l.valor)}</td>
                     <td class="p-3 text-slate-500">${formatarDataBR(l.dataCadastro)}</td>
                     <td class="p-3">
-                        <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium bg-white focus:ring-1 focus:ring-teal-600">
-                            <option value="Qualificação" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
-                            <option value="Em Negociação" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
-                            <option value="Convertido" ${l.status === 'Convertido' ? 'selected' : ''}>Convertido</option>
-                            <option value="Recusado" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
+                        <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                            <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
+                            <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
+                            <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
+                            <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
                         </select>
                     </td>
                     <td class="p-3 text-center flex justify-center gap-3 text-base mt-2">
@@ -442,21 +575,18 @@
                 tbodyLeads.appendChild(tr);
             });
 
-            // Renderizar Agenda de Visitas
+            // FILTRAGEM DA AGENDA INDEPENDENTE
             const tbodyAgenda = document.getElementById('tbody-agenda');
             tbodyAgenda.innerHTML = '';
 
-            const filtroAgenda = document.getElementById('filtro-agenda-dias').value;
-            const hojeStr = new Date().toISOString().split('T')[0];
-            
-            let amanha = new Date();
-            amanha.setDate(amanha.getDate() + 1);
-            const amanhaStr = amanha.toISOString().split('T')[0];
+            const filtroAgendaMes = document.getElementById('filtro-agenda-mes').value;
 
-            leadsFiltrados.forEach(l => {
+            listaLeads.forEach(l => {
                 if(l.agendarVisita && l.visitaData) {
-                    if(filtroAgenda === 'Hoje' && l.visitaData !== hojeStr) return;
-                    if(filtroAgenda === 'Amanhã' && l.visitaData !== amanhaStr) return;
+                    if(filtroAgendaMes !== 'Todos') {
+                        const mesExtraido = l.visitaData.split('-')[1];
+                        if (mesExtraido !== filtroAgendaMes) return;
+                    }
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition";
@@ -493,6 +623,7 @@
                 nome: document.getElementById('lead-nome').value,
                 documento: document.getElementById('lead-doc').value,
                 empresa: document.getElementById('lead-empresa').value,
+                endereco: document.getElementById('lead-endereco').value,
                 whatsApp: document.getElementById('lead-whats').value,
                 valor: parseFloat(document.getElementById('lead-valor').value) || 0,
                 dataCadastro: document.getElementById('lead-data').value,
@@ -520,17 +651,59 @@
             }
         });
 
+        // MODAL DE DETALHES INDIVIDUAIS DO CLIENTE
+        const modalDetalhes = document.getElementById('modal-detalhes');
+        
+        function abrirModalDetalhes(id) {
+            const lead = listaLeads.find(l => l.id === id);
+            if(!lead) return;
+
+            document.getElementById('modal-nome').textContent = lead.nome;
+            document.getElementById('modal-doc').textContent = lead.documento || 'Não informado';
+            document.getElementById('modal-empresa').textContent = lead.empresa || 'Não informada';
+            document.getElementById('modal-lead-endereco').textContent = lead.endereco || 'Não informado';
+            document.getElementById('modal-whats').textContent = lead.whatsApp || 'Não informado';
+            document.getElementById('modal-valor').textContent = formatarMoeda(lead.valor);
+            document.getElementById('modal-data').textContent = formatarDataBR(lead.dataCadastro);
+            
+            const badgeStatus = document.getElementById('modal-status');
+            badgeStatus.textContent = lead.status;
+            badgeStatus.className = "col-span-2 px-2 py-1 rounded text-xs font-bold w-fit " + obterClasseStatus(lead.status);
+
+            const boxVisita = document.getElementById('modal-box-visita');
+            if (lead.agendarVisita && lead.visitaData) {
+                document.getElementById('modal-visita-datetime').textContent = `${formatarDataBR(lead.visitaData)} às ${lead.visitaHora || '--:--'}`;
+                document.getElementById('modal-visita-local').textContent = lead.visitaEndereco || 'Não informado';
+                boxVisita.classList.remove('hidden');
+            } else {
+                boxVisita.classList.add('hidden');
+            }
+
+            modalDetalhes.classList.remove('hidden');
+        }
+
+        document.getElementById('btn-fechar-modal').addEventListener('click', () => modalDetalhes.classList.add('hidden'));
+        document.getElementById('btn-modal-ok').addEventListener('click', () => modalDetalhes.classList.add('hidden'));
+
         function atribuirEventosDinamicos() {
-            // Mudar Status Direto na Tabela
+            document.querySelectorAll('.btn-ver-detalhes').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    abrirModalDetalhes(id);
+                });
+            });
+
             document.querySelectorAll('.select-status').forEach(sel => {
                 sel.addEventListener('change', async (e) => {
                     const id = e.target.getAttribute('data-id');
                     const novoStatus = e.target.value;
+                    
+                    e.target.className = `select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${obterClasseStatus(novoStatus)}`;
+                    
                     await updateDoc(doc(db, "leads", id), { status: novoStatus });
                 });
             });
 
-            // Editar Lead
             document.querySelectorAll('.btn-editar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -540,6 +713,7 @@
                         document.getElementById('lead-nome').value = lead.nome;
                         document.getElementById('lead-doc').value = lead.documento || '';
                         document.getElementById('lead-empresa').value = lead.empresa || '';
+                        document.getElementById('lead-endereco').value = lead.endereco || '';
                         document.getElementById('lead-whats').value = lead.whatsApp || '';
                         document.getElementById('lead-valor').value = lead.valor;
                         document.getElementById('lead-data').value = lead.dataCadastro;
@@ -555,7 +729,6 @@
                 });
             });
 
-            // Remover apenas o agendamento
             document.querySelectorAll('.btn-remover-visita').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -570,7 +743,6 @@
                 });
             });
 
-            // Deletar Lead Completamente
             document.querySelectorAll('.btn-excluir').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -581,11 +753,10 @@
             });
         }
 
-        // ESCOPO DOS FILTROS E LIMPAR
         document.getElementById('filtro-dia').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-mes').addEventListener('change', renderizarDashboard);
         document.getElementById('filtro-ano').addEventListener('input', renderizarDashboard);
-        document.getElementById('filtro-agenda-dias').addEventListener('change', renderizarDashboard);
+        document.getElementById('filtro-agenda-mes').addEventListener('change', renderizarDashboard);
 
         document.getElementById('btn-limpar-filtros').addEventListener('click', () => {
             document.getElementById('filtro-dia').value = '';
@@ -594,11 +765,10 @@
             renderizarDashboard();
         });
 
-        // EXPORTAÇÃO CSV PARA EXCEL (SIMULADA COM FORMATO ORIGINAL)
         function exportarTabelaParaCSV(leadsArray, nomeArquivo) {
-            let csv = '\uFEFFLead;Empresa;Valor;Data Cadastro;Status;Data Visita;Endereco Visita\n';
+            let csv = '\uFEFFLead;Empresa;Endereco Lead;Valor;Data Cadastro;Status;Data Visita;Endereco Visita\n';
             leadsArray.forEach(l => {
-                csv += `"${l.nome}";"${l.empresa || ''}";"${l.valor}";"${l.dataCadastro}";"${l.status}";"${l.visitaData || ''}";"${l.visitaEndereco || ''}"\n`;
+                csv += `"${l.nome}";"${l.empresa || ''}";"${l.endereco || ''}";"${l.valor}";"${l.dataCadastro}";"${l.status}";"${l.visitaData || ''}";"${l.visitaEndereco || ''}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
