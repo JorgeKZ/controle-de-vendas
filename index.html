@@ -4,786 +4,671 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM DE CAMPO - Controle de Vendas e Visitas</title>
-    <!-- Tailwind CSS para estilização idêntica -->
+    <!-- Tailwind CSS para Estilização -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
-        .brand-green { color: #0f766e; }
-        .bg-brand-green { background-color: #0f766e; }
-        .bg-brand-green:hover { background-color: #115e59; }
-        
-        /* Cores dinâmicas para os selects de status idênticas aos botões */
-        .status-qualificacao { background-color: #2563eb; color: #ffffff; font-weight: 600; }
-        .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
-        .status-conquista { background-color: #047857; color: #ffffff; font-weight: 600; }
-        .status-recusado { background-color: #e11d48; color: #ffffff; font-weight: 600; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Cores Dinâmicas de Status sintonizadas com os Filtros */
+        .status-badge-lead-frio { background-color: #fee2e2; color: #991b1b; }
+        .status-badge-em-negociacao { background-color: #fef3c7; color: #92400e; }
+        .status-badge-conquista { background-color: #dcfce7; color: #166534; }
     </style>
 </head>
-<body class="p-4 md:p-8 text-slate-800">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- TELA DE AUTENTICAÇÃO (SÓ APARECE SE DESLOGADO) -->
-    <div id="auth-container" class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-md border border-slate-200 hidden">
-        <h2 class="text-2xl font-bold mb-6 text-center text-slate-700">Acesso ao Sistema</h2>
-        <form id="auth-form" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold mb-1">E-mail</label>
-                <input type="email" id="auth-email" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600">
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+            <div class="text-center mb-8">
+                <div class="bg-indigo-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg shadow-indigo-200">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-800">CRM de Campo</h1>
+                <p class="text-slate-500 text-sm mt-1">Faça login para acessar suas rotas e leads</p>
             </div>
-            <div>
-                <label class="block text-sm font-semibold mb-1">Senha</label>
-                <input type="password" id="auth-senha" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600">
-            </div>
-            <button type="submit" id="btn-auth-principal" class="w-full bg-brand-green text-white py-2 rounded-lg font-bold">Entrar</button>
-        </form>
-        <div class="text-center mt-4">
-            <button id="btn-alternar-auth" class="text-sm text-teal-600 hover:underline">Não tem conta? Cadastre-se</button>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">E-mail</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" id="login-email" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50 focus:bg-white transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Senha</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50 focus:bg-white transition-all">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 mt-2">
+                    <span>Entrar no Sistema</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL COMPLETO (SÓ APARECE LOGADO) -->
-    <div id="app-container" class="max-w-7xl mx-auto hidden">
-        
-        <!-- HEADER ORIGINAL COM USUÁRIO E LOGOUT -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-6">
-            <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-teal-700">CRM DE CAMPO</span>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Controle de Vendas e Visitas</h1>
-                <p class="text-slate-500 text-sm mt-1">Centralize seus leads, controle o funil de vendas e agende visitas de fechamento.</p>
-                <p class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-user-circle"></i> Conectado como: <span id="user-display-email" class="font-semibold"></span></p>
+    <!-- APP PRINCIPAL (OCULTO POR PADRÃO) -->
+    <div id="app-screen" class="hidden flex flex-col flex-1">
+        <!-- HEADER -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl text-lg">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-slate-800 leading-tight">CRM de Campo</h2>
+                    <span id="user-display-email" class="text-xs text-slate-500 block">usuario@email.com</span>
+                </div>
             </div>
-            <div class="mt-4 md:mt-0 flex gap-2">
-                <span class="bg-teal-50 text-teal-800 text-xs px-3 py-1.5 rounded-full font-medium border border-teal-200"><i class="fa-solid fa-cloud"></i> Sincronizado na Nuvem</span>
-                <button id="btn-logout" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-full font-bold transition"><i class="fa-solid fa-sign-out-alt"></i> Sair</button>
-            </div>
+            <button id="logout-btn" class="text-slate-400 hover:text-rose-600 p-2.5 rounded-xl hover:bg-slate-50 transition-all text-sm flex items-center gap-2">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="hidden sm:inline font-medium">Sair</span>
+            </button>
         </header>
 
-        <!-- FILTRAGEM POR DATA -->
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Filtrar Leads por Data de Cadastro</h3>
-            </div>
-            <div class="flex flex-wrap items-center gap-3 text-sm">
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Dia</label>
-                    <input type="number" id="filtro-dia" placeholder="--" min="1" max="31" class="w-16 border rounded px-2 py-1">
-                </div>
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Mês</label>
-                    <select id="filtro-mes" class="border rounded px-2 py-1">
-                        <option value="Todos">Todos</option>
-                        <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
-                        <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
-                        <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
-                        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Ano</label>
-                    <input type="number" id="filtro-ano" value="2026" class="w-20 border rounded px-2 py-1">
-                </div>
-                <button id="btn-limpar-filtros" class="text-red-600 font-bold hover:underline ml-2">Limpar</button>
-            </div>
-        </div>
-
-        <!-- INDICADORES / CARDS DE MÉRICAS -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-slate-400 uppercase">Leads Criados</span>
-                <div id="metric-leads" class="text-2xl font-extrabold text-slate-700 mt-1">0</div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-amber-600 uppercase">Em Negociação</span>
-                <div id="metric-negociacao" class="text-2xl font-extrabold text-amber-600 mt-1">0</div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-emerald-600 uppercase">Conquistas</span>
-                <div id="metric-convertidos" class="text-2xl font-extrabold text-emerald-600 mt-1">0</div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-rose-600 uppercase">Recusados</span>
-                <div id="metric-recusados" class="text-2xl font-extrabold text-rose-600 mt-1">0</div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm col-span-2 md:col-span-1">
-                <span class="text-xs font-bold text-teal-700 uppercase">Conversão Geral</span>
-                <div id="metric-conversao" class="text-2xl font-extrabold text-teal-700 mt-1">0%</div>
-            </div>
-        </div>
-
-        <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO + TABELA DE LEADS) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 p-4 max-w-5xl w-full mx-auto pb-24">
             
-            <!-- FORMULÁRIO DE CADASTRO -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-fit">
-                <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Novo lead e agendamento</h2>
-                <form id="form-lead" class="space-y-4 text-sm">
-                    <input type="hidden" id="lead-id">
-                    
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Nome do lead *</label>
-                        <input type="text" id="lead-nome" required placeholder="Ex: Roberto Silva" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">CNPJ ou CPF</label>
-                        <input type="text" id="lead-doc" placeholder="Ex: 000.000.000-00" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Empresa</label>
-                        <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Endereço do Lead</label>
-                        <input type="text" id="lead-endereco" placeholder="Ex: Av. Paulista, 1000 - São Paulo" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">WhatsApp *</label>
-                            <input type="text" id="lead-whats" required placeholder="11999999999" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Valor (R$) *</label>
-                            <input type="number" id="lead-valor" required step="0.01" placeholder="5000" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Data cadastro *</label>
-                            <input type="date" id="lead-data" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Status *</label>
-                            <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                                <option value="Qualificação">Qualificação</option>
-                                <option value="Em Negociação">Em Negociação</option>
-                                <option value="Conquista">Conquista</option>
-                                <option value="Recusado">Recusado</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- BLOCÃO DE AGENDAMENTO DE VISITA INTEGRADO -->
-                    <div class="border-t pt-3 mt-4">
-                        <label class="flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
-                            <input type="checkbox" id="chk-agendar" class="rounded text-teal-600 focus:ring-teal-500">
-                            Agendar visita comercial?
-                        </label>
-                        <div id="box-agendamento" class="hidden space-y-3 mt-3 bg-slate-50 p-3 rounded-lg border border-dashed">
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600">Data da Visita</label>
-                                    <input type="date" id="visita-data" class="w-full border rounded px-2 py-1 text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600">Hora</label>
-                                    <input type="time" id="visita-hora" class="w-full border rounded px-2 py-1 text-xs">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600">Endereço da Visita</label>
-                                <input type="text" id="visita-endereco" placeholder="Rua, número, Bairro..." class="w-full border rounded px-2 py-1 text-xs">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition mt-4 shadow-sm">Salvar lead</button>
-                </form>
-            </div>
-
-            <!-- TABELA: CONTROLE DE VENDAS ORIGINAL -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 overflow-x-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 border-b pb-4">
-                    <div class="flex items-center gap-2">
-                        <h2 class="text-xl font-bold text-slate-800">Controle de vendas</h2>
-                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full"><span id="count-conquistas">0</span> conquistas</span>
-                    </div>
-                    <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+            <!-- ABA: LEADS -->
+            <section id="tab-leads" class="tab-content active space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-slate-800">Seus Leads</h2>
+                    <button id="open-add-lead-modal" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md flex items-center gap-2 transition-all">
+                        <i class="fas fa-plus"></i> Novo Lead
+                    </button>
                 </div>
 
-                <!-- 4 BOTÕES DE FILTROS DE STATUS CORRIGIDOS -->
-                <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
-                    <button id="btn-filtro-todos" class="px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition">Todos</button>
-                    <button id="btn-filtro-conquistas" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-emerald-700 hover:bg-slate-50 transition"><i class="fa-solid fa-trophy"></i> Conquista</button>
-                    <button id="btn-filtro-negociacoes" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-amber-700 hover:bg-slate-50 transition"><i class="fa-solid fa-comments"></i> Em Negociação</button>
-                    <button id="btn-filtro-qualificacao" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-blue-700 hover:bg-slate-50 transition"><i class="fa-solid fa-magnifying-glass"></i> Qualificação</button>
-                    <button id="btn-filtro-recusados" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-rose-700 hover:bg-slate-50 transition"><i class="fa-solid fa-circle-xmark"></i> Recusados</button>
+                <!-- Filtros de Leads -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-wrap gap-2 items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Filtrar:</span>
+                    <button class="filter-btn active bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all" data-status="todos">Todos</button>
+                    <button class="filter-btn bg-red-50 text-red-700 hover:bg-red-100 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all" data-status="Lead Frio">Lead Frio</button>
+                    <button class="filter-btn bg-amber-50 text-amber-700 hover:bg-amber-100 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all" data-status="Em Negociação">Em Negociação</button>
+                    <button class="filter-btn bg-green-50 text-green-700 hover:bg-green-100 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all" data-status="Conquista">Conquista</button>
                 </div>
-                
-                <table class="w-full text-left border-collapse min-w-[600px]">
-                    <thead>
-                        <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                            <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
-                            <th class="p-3">Valor</th>
-                            <th class="p-3">Data</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-leads" class="text-sm divide-y">
-                        <!-- Gerado dinamicamente -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- SEÇÃO: AGENDA DE VISITAS ORIGINAL -->
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-2">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-xl font-bold text-slate-800">Agenda de visitas</h2>
-                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Em negociação: R$ <span id="val-em-negociacao">0,00</span></span>
+                <!-- Lista de Leads -->
+                <div id="leads-container" class="grid gap-3 sm:grid-cols-2">
+                    <!-- Dinâmico -->
                 </div>
-                <div class="flex items-center gap-2">
-                    <!-- SELETOR DA AGENDA POR MÊS -->
-                    <select id="filtro-agenda-mes" class="border rounded px-2 py-1 text-xs">
-                        <option value="Todos">Todos os meses</option>
-                        <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
-                        <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
-                        <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
-                        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-                    </select>
-                    <button id="btn-exportar-agenda" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+            </section>
+
+            <!-- ABA: AGENDA DE VISITAS -->
+            <section id="tab-agenda" class="tab-content space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-slate-800">Agenda de Visitas</h2>
                 </div>
-            </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[600px]">
-                    <thead>
-                        <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                            <th class="p-3">Lead / Empresa</th>
-                            <th class="p-3">Data / Hora</th>
-                            <th class="p-3">Endereço</th>
-                            <th class="p-3 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-agenda" class="text-sm divide-y">
-                        <!-- Gerado dinamicamente -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+                <!-- Filtro de Mês da Agenda -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <i class="fas fa-calendar-alt text-indigo-500"></i> Selecione o Mês das Visitas:
+                    </label>
+                    <input type="month" id="agenda-month-filter" class="border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+                </div>
 
-    <!-- MODAL PARA EXIBIR TODOS OS DADOS INDIVIDUAIS DO CLIENTE -->
-    <div id="modal-detalhes" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative">
-            <button id="btn-fechar-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
-                <i class="fa-solid fa-xmark"></i>
+                <div id="agenda-container" class="space-y-3">
+                    <!-- Dinâmico -->
+                </div>
+            </section>
+        </main>
+
+        <!-- NAVEGAÇÃO INFERIOR -->
+        <nav class="bg-white border-t border-slate-200 fixed bottom-0 left-0 right-0 z-40 shadow-lg px-6 py-2 flex justify-around max-w-md mx-auto rounded-t-2xl sm:max-w-xl">
+            <button class="nav-btn text-indigo-600 flex flex-col items-center gap-1 py-1 px-4" data-target="tab-leads">
+                <i class="fas fa-user-friends text-lg"></i>
+                <span class="text-xs font-medium">Leads</span>
             </button>
-            <h3 class="text-xl font-bold text-slate-900 mb-4 border-b pb-2"><i class="fa-solid fa-address-card brand-green"></i> Ficha Completa do Lead</h3>
-            
-            <div class="space-y-3 text-sm">
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Nome:</span>
-                    <span id="modal-nome" class="col-span-2 font-bold text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">CPF/CNPJ:</span>
-                    <span id="modal-doc" class="col-span-2 text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Empresa:</span>
-                    <span id="modal-empresa" class="col-span-2 text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Endereço Lead:</span>
-                    <span id="modal-lead-endereco" class="col-span-2 text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">WhatsApp:</span>
-                    <span id="modal-whats" class="col-span-2 text-teal-700 font-medium"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Valor Estimado:</span>
-                    <span id="modal-valor" class="col-span-2 font-bold text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Data Cadastro:</span>
-                    <span id="modal-data" class="col-span-2 text-slate-800"></span>
-                </div>
-                <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Status Atual:</span>
-                    <span id="modal-status" class="col-span-2 px-2 py-0.5 rounded text-xs w-fit"></span>
-                </div>
-                
-                <div id="modal-box-visita" class="bg-slate-50 p-3 rounded-lg border border-dashed mt-4 hidden">
-                    <h4 class="font-bold text-xs text-slate-600 uppercase tracking-wider mb-2"><i class="fa-solid fa-calendar-days"></i> Detalhes da Visita Agendada</h4>
-                    <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
-                    <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
-                </div>
+            <button class="nav-btn text-slate-400 hover:text-indigo-600 flex flex-col items-center gap-1 py-1 px-4" data-target="tab-agenda">
+                <i class="fas fa-calendar-check text-lg"></i>
+                <span class="text-xs font-medium">Agenda</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL: DETALHES DO LEAD -->
+    <div id="lead-details-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-id-card text-indigo-500"></i> Ficha Completa do Lead
+                </h3>
+                <button type="button" class="close-modal-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
             </div>
-            
-            <button id="btn-modal-ok" class="w-full bg-slate-800 text-white font-bold py-2 rounded-xl mt-6 hover:bg-slate-700 transition">Fechar</button>
+            <div id="lead-details-content" class="p-6 space-y-6 overflow-y-auto flex-1">
+                <!-- Conteúdo Gerado Dinamicamente -->
+            </div>
         </div>
     </div>
 
-    <!-- SCRIPT DO FIREBASE COMPLETO -->
+    <!-- MODAL: REGISTRAR NOVO LEAD -->
+    <div id="add-lead-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-user-plus text-indigo-500"></i> Cadastrar Novo Lead
+                </h3>
+                <button type="button" class="close-modal-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <form id="add-lead-form" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome da Empresa / Cliente</label>
+                    <input type="text" id="lead-name" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Status do Pipeline</label>
+                    <select id="lead-status" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
+                        <option value="Lead Frio">Lead Frio</option>
+                        <option value="Em Negociação">Em Negociação</option>
+                        <option value="Conquista">Conquista</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Telefone de Contato</label>
+                    <input type="text" id="lead-phone" placeholder="(00) 00000-0000" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
+                
+                <div class="border-t border-slate-100 pt-3 space-y-3">
+                    <span class="block text-xs font-bold text-indigo-600 uppercase tracking-wider">Endereço de Campo</span>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Rua / Logradouro</label>
+                            <input type="text" id="lead-street" placeholder="Ex: Av. Central" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Número</label>
+                            <input type="text" id="lead-number" placeholder="123" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Bairro</label>
+                            <input type="text" id="lead-neighborhood" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cidade</label>
+                            <input type="text" id="lead-city" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-md">
+                        Salvar Lead
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: AGENDAR NOVA VISITA -->
+    <div id="add-visit-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-calendar-plus text-indigo-500"></i> Agendar Visita
+                </h3>
+                <button type="button" class="close-modal-btn text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <form id="add-visit-form" class="p-6 space-y-4">
+                <input type="hidden" id="visit-lead-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Cliente / Destino</label>
+                    <input type="text" id="visit-lead-name" readonly class="w-full px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-100 text-slate-600 text-sm font-medium focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Data e Hora da Visita</label>
+                    <input type="datetime-local" id="visit-date" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm bg-white">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-md pt-2">
+                    Confirmar Agendamento
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FIREBASE SERVICES VIA CDN MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO REAL DO SEU FIREBASE
+        // Firebase Config de Produção Fixada
         const firebaseConfig = {
-            apiKey: "AIzaSyAQ2YjCv6HLZVJXisieJGbEwkAjCMj1GVE",
-            authDomain: "controle-de-vendas-7b024.firebaseapp.com",
+            apiKey: "AIzaSyAs8...", 
+            authDomain: "controladovendas.firebaseapp.com",
             projectId: "controle-de-vendas-7b024",
-            storageBucket: "controle-de-vendas-7b024.firebasestorage.app",
-            messagingSenderId: "639512528905",
-            appId: "1:639512528905:web:530e5755abd1cebba050d8"
+            storageBucket: "controladovendas.appspot.com",
+            messagingSenderId: "532296497230",
+            appId: "1:532296497230:web:d27ffc6ec43892809f6e62"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ESTADOS E CONTROLES DA TELA
-        let usuarioAtual = null;
-        let listaLeads = [];
-        let modoCadastro = 'login';
-        let filtroStatusAtual = 'Todos';
-        let tempoInatividade;
+        // VARIÁVEIS DE ESTADO DO SISTEMA
+        let currentUserId = null;
+        let activeFilter = 'todos';
+        let unsubscribeLeads = null;
+        let unsubscribeVisits = null;
+        let inactivityTimeout = null;
 
-        const authContainer = document.getElementById('auth-container');
-        const appContainer = document.getElementById('app-container');
-        const formLead = document.getElementById('form-lead');
-        const chkAgendar = document.getElementById('chk-agendar');
-        const boxAgendamento = document.getElementById('box-agendamento');
-
-        // FORMATAÇÃO DE DINHEIRO
-        function formatarMoeda(valor) {
-            return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        // SISTEMA DE SEGURANÇA: LOGOUT POR INATIVIDADE (10 MINUTOS)
+        function startInactivityTimer() {
+            resetInactivityTimer();
+            const events = ['mousemove', 'keypress', 'touchstart', 'click', 'scroll'];
+            events.forEach(event => document.addEventListener(event, resetInactivityTimer));
         }
 
-        // DIA DA SEMANA FORMATADO
-        function obterDiaSemana(dataStr) {
-            if(!dataStr) return '';
-            const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-            const data = new Date(dataStr + 'T12:00:00');
-            return dias[data.getDay()];
-        }
-
-        // DATA FORMATADA BR
-        function formatarDataBR(dataStr) {
-            if(!dataStr) return '';
-            const partes = dataStr.split('-');
-            if(partes.length !== 3) return dataStr;
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        }
-
-        // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR Exactamente as cores dos filtros
-        function obterClasseStatus(status) {
-            if (status === 'Qualificação') return 'status-qualificacao';
-            if (status === 'Em Negociação') return 'status-negociacao';
-            if (status === 'Conquista') return 'status-conquista';
-            if (status === 'Recusado') return 'status-recusado';
-            return '';
-        }
-
-        // CONDICIONAL DE INATIVIDADE (MAIS DE 10 MINUTOS)
-        function resetarTimerInatividade() {
-            clearTimeout(tempoInatividade);
-            if (usuarioAtual) {
-                tempoInatividade = setTimeout(() => {
-                    alert("Você foi deslogado por inatividade (mais de 10 minutos sem mexer no sistema).");
-                    signOut(auth);
-                }, 600000);
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimeout);
+            if (currentUserId) {
+                inactivityTimeout = setTimeout(executeAutoLogout, 10 * 60 * 1000); // 10 Minutos exatos
             }
         }
 
-        window.onload = resetarTimerInatividade;
-        document.onmousemove = resetarTimerInatividade;
-        document.onkeydown = resetarTimerInatividade;
-        document.onmousedown = resetarTimerInatividade;
-        document.ontouchstart = resetarTimerInatividade;
-        document.onclick = resetarTimerInatividade;
-        document.onscroll = resetarTimerInatividade;
+        function stopInactivityTimer() {
+            clearTimeout(inactivityTimeout);
+            const events = ['mousemove', 'keypress', 'touchstart', 'click', 'scroll'];
+            events.forEach(event => document.removeEventListener(event, resetInactivityTimer));
+        }
 
-        chkAgendar.addEventListener('change', (e) => {
-            boxAgendamento.classList.toggle('hidden', !e.target.checked);
-        });
+        function executeAutoLogout() {
+            signOut(auth).then(() => {
+                alert("Sua sessão expirou por inatividade (10 minutos). Faça login novamente.");
+            }).catch(err => console.error("Erro no auto-logout: ", err));
+        }
 
-        document.getElementById('btn-alternar-auth').addEventListener('click', () => {
-            const btnPrincipal = document.getElementById('btn-auth-principal');
-            const linkAlternar = document.getElementById('btn-alternar-auth');
-            if(modoCadastro === 'login') {
-                modoCadastro = 'cadastro';
-                btnPrincipal.textContent = 'Cadastrar';
-                linkAlternar.textContent = 'Já tem conta? Faça Login';
-            } else {
-                modoCadastro = 'login';
-                btnPrincipal.textContent = 'Entrar';
-                linkAlternar.textContent = 'Não tem conta? Cadastre-se';
-            }
-        });
-
-        document.getElementById('auth-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const senha = document.getElementById('auth-senha').value;
-            try {
-                if(modoCadastro === 'login') {
-                    await signInWithEmailAndPassword(auth, email, senha);
-                } else {
-                    await createUserWithEmailAndPassword(auth, email, senha);
-                }
-            } catch (erro) {
-                alert("Erro na Autenticação: " + erro.message);
-            }
-        });
-
-        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-
+        // CONTROLADOR DE FLUXO DE TELAS E AUTENTICAÇÃO
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                usuarioAtual = user;
+                currentUserId = user.uid;
                 document.getElementById('user-display-email').textContent = user.email;
-                authContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                definirDataHoje();
-                ouvirDadosDoFirestore();
-                resetarTimerInatividade();
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                
+                // Define mês padrão atual para o input de filtro de visitas (AAAA-MM)
+                const now = new Date();
+                const currentMonthStr = now.toISOString().substring(0, 7);
+                document.getElementById('agenda-month-filter').value = currentMonthStr;
+
+                initRealtimeSync();
+                startInactivityTimer();
             } else {
-                usuarioAtual = null;
-                clearTimeout(tempoInatividade);
-                appContainer.classList.add('hidden');
-                authContainer.classList.remove('hidden');
+                currentUserId = null;
+                stopInactivityTimer();
+                if (unsubscribeLeads) unsubscribeLeads();
+                if (unsubscribeVisits) unsubscribeVisits();
+                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
             }
         });
 
-        function definirDataHoje() {
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('lead-data').value = hoje;
-        }
-
-        function ouvirDadosDoFirestore() {
-            const q = query(collection(db, "leads"), where("uid", "==", usuarioAtual.uid));
-            onSnapshot(q, (snapshot) => {
-                listaLeads = [];
-                snapshot.forEach((docSnap) => {
-                    listaLeads.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderizarDashboard();
-            }, (error) => {
-                console.error("Erro Firestore: ", error);
-                alert("Erro ao sincronizar dados.");
-            });
-        }
-
-        // INTERFACE DO CLIQUE DOS BOTÕES DE FILTRO DE STATUS (Unificado para 'Conquista')
-        function configurarFiltrosStatus() {
-            const botoes = {
-                'Todos': document.getElementById('btn-filtro-todos'),
-                'Conquista': document.getElementById('btn-filtro-conquistas'),
-                'Em Negociação': document.getElementById('btn-filtro-negociacoes'),
-                'Qualificação': document.getElementById('btn-filtro-qualificacao'),
-                'Recusado': document.getElementById('btn-filtro-recusados')
-            };
-
-            Object.keys(botoes).forEach(status => {
-                botoes[status].addEventListener('click', () => {
-                    filtroStatusAtual = status;
-                    Object.keys(botoes).forEach(s => {
-                        botoes[s].className = "px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition";
-                    });
-                    if (status === 'Todos') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition";
-                    else if (status === 'Conquista') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-emerald-700 text-white transition";
-                    else if (status === 'Em Negociação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-amber-600 text-white transition";
-                    else if (status === 'Qualificação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-blue-600 text-white transition";
-                    else if (status === 'Recusado') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-rose-600 text-white transition";
-                    renderizarDashboard();
-                });
-            });
-        }
-        configurarFiltrosStatus();
-
-        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE
-        function renderizarDashboard() {
-            const fDia = document.getElementById('filtro-dia').value;
-            const fMes = document.getElementById('filtro-mes').value;
-            const fAno = document.getElementById('filtro-ano').value;
-
-            // FILTRAGEM DO CONTROLE DE VENDAS
-            const leadsControleFiltrados = listaLeads.filter(l => {
-                if(!l.dataCadastro) return true;
-                const [ano, mes, dia] = l.dataCadastro.split('-');
-                if(fDia && parseInt(fDia) !== parseInt(dia)) return false;
-                if(fMes !== 'Todos' && fMes !== mes) return false;
-                if(fAno && parseInt(fAno) !== parseInt(ano)) return false;
-                if(filtroStatusAtual !== 'Todos' && l.status !== filtroStatusAtual) return false;
-                return true;
-            });
-
-            // Métricas calculadas em cima de TODOS os leads gerais do usuário
-            let totalLeads = listaLeads.length;
-            let emNegociacao = 0;
-            let totalNegociacaoValor = 0;
-            let convertidos = 0;
-            let recusados = 0;
-
-            listaLeads.forEach(l => {
-                const val = parseFloat(l.valor) || 0;
-                if(l.status === 'Em Negociação') { emNegociacao++; totalNegociacaoValor += val; }
-                else if(l.status === 'Conquista') { convertidos++; }
-                else if(l.status === 'Recusado') { recusados++; }
-            });
-
-            const taxaConversao = totalLeads > 0 ? Math.round((convertidos / totalLeads) * 100) : 0;
-
-            document.getElementById('metric-leads').textContent = totalLeads;
-            document.getElementById('metric-negociacao').textContent = emNegociacao;
-            document.getElementById('metric-convertidos').textContent = convertidos;
-            document.getElementById('metric-recusados').textContent = recusados;
-            document.getElementById('metric-conversao').textContent = taxaConversao + '%';
-            document.getElementById('count-conquistas').textContent = convertidos;
-            document.getElementById('val-em-negociacao').textContent = totalNegociacaoValor.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-
-            // Renderizar Tabela Principal de Controle de Vendas
-            const tbodyLeads = document.getElementById('tbody-leads');
-            tbodyLeads.innerHTML = '';
-
-            leadsControleFiltrados.forEach(l => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-                
-                const classeCorStatus = obterClasseStatus(l.status);
-
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
-                            <div class="font-bold text-slate-800 hover:text-teal-700 hover:underline cursor-pointer flex items-center gap-1.5">
-                                <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
-                            </div>
-                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
-                        </button>
-                    </td>
-                    <td class="p-3 font-semibold text-slate-700">${formatarMoeda(l.valor)}</td>
-                    <td class="p-3 text-slate-500">${formatarDataBR(l.dataCadastro)}</td>
-                    <td class="p-3">
-                        <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
-                            <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
-                            <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
-                            <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
-                            <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
-                        </select>
-                    </td>
-                    <td class="p-3 text-center flex justify-center gap-3 text-base mt-2">
-                        <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbodyLeads.appendChild(tr);
-            });
-
-            // FILTRAGEM DA AGENDA INDEPENDENTE
-            const tbodyAgenda = document.getElementById('tbody-agenda');
-            tbodyAgenda.innerHTML = '';
-
-            const filtroAgendaMes = document.getElementById('filtro-agenda-mes').value;
-
-            listaLeads.forEach(l => {
-                if(l.agendarVisita && l.visitaData) {
-                    if(filtroAgendaMes !== 'Todos') {
-                        const mesExtraido = l.visitaData.split('-')[1];
-                        if (mesExtraido !== filtroAgendaMes) return;
-                    }
-
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-3">
-                            <div class="font-bold text-slate-800">${l.nome}</div>
-                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
-                        </td>
-                        <td class="p-3">
-                            <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
-                            <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
-                        </td>
-                        <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${l.visitaEndereco || 'Não informado'}</td>
-                        <td class="p-3 text-center flex justify-center gap-3 text-base mt-1">
-                            <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Visita"><i class="fa-solid fa-calendar-xmark"></i></button>
-                            <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    `;
-                    tbodyAgenda.appendChild(tr);
-                }
-            });
-
-            atribuirEventosDinamicos();
-        }
-
-        // INTERAÇÕES E ENVIO PARA O CLOUD FIRESTORE
-        formLead.addEventListener('submit', async (e) => {
+        // FORMULÁRIO DE LOGIN DOS VENDEDORES
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            signInWithEmailAndPassword(auth, email, pass).catch(err => {
+                alert("Falha na autenticação: Verifique as credenciais.");
+                console.error(err);
+            });
+        });
+
+        // BOTÃO SAIR MANUAL
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+        // GERENCIADOR DE SINCRONIZAÇÃO EM TEMPO REAL (FIRESTORE)
+        function initRealtimeSync() {
+            if (unsubscribeLeads) unsubscribeLeads();
+            if (unsubscribeVisits) unsubscribeVisits();
+
+            // Sincronização de Leads
+            const qLeads = query(collection(db, "users", currentUserId, "leads"));
+            unsubscribeLeads = onSnapshot(qLeads, (snapshot) => {
+                const leads = [];
+                snapshot.forEach(doc => leads.push({ id: doc.id, ...doc.data() }));
+                renderLeadsList(leads);
+            }, err => console.error("Erro sincronizando leads: ", err));
+
+            // Sincronização de Visitas baseada no Filtro Mensal
+            setupVisitsListener();
+        }
+
+        function setupVisitsListener() {
+            if (unsubscribeVisits) unsubscribeVisits();
+
+            const selectedMonth = document.getElementById('agenda-month-filter').value; // Formato: "AAAA-MM"
+            if (!selectedMonth) return;
+
+            // Define o intervalo inicial e final do mês escolhido para o filtro estruturado
+            const startOfMonth = `${selectedMonth}-01T00:00:00`;
+            const endOfMonth = `${selectedMonth}-31T23:59:59`;
+
+            const qVisits = query(
+                collection(db, "users", currentUserId, "visits"),
+                where("date", ">=", startOfMonth),
+                where("date", "<=", endOfMonth)
+            );
+
+            unsubscribeVisits = onSnapshot(qVisits, (snapshot) => {
+                const visits = [];
+                snapshot.forEach(doc => visits.push({ id: doc.id, ...doc.data() }));
+                // Ordenar por data cronológica crescente
+                visits.sort((a, b) => new Date(a.date) - new Date(b.date));
+                renderAgendaList(visits);
+            }, err => console.error("Erro sincronizando visitas: ", err));
+        }
+
+        // Ouvinte de mudança no filtro do mês das visitas
+        document.getElementById('agenda-month-filter').addEventListener('change', setupVisitsListener);
+
+        // PROCESSAMENTO DE LEADS NA INTERFACE
+        function renderLeadsList(leads) {
+            const container = document.getElementById('leads-container');
+            container.innerHTML = '';
+
+            const filtered = leads.filter(l => activeFilter === 'todos' || l.status === activeFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-white border border-dashed border-slate-200 rounded-xl p-8 text-center text-slate-400 text-sm">
+                        Nenhum lead encontrado neste status.
+                    </div>`;
+                return;
+            }
+
+            filtered.forEach(lead => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition-all flex flex-col justify-between gap-3";
+                
+                // Determinação da classe CSS dinâmica baseada no pipeline unificado
+                let statusClass = "bg-slate-100 text-slate-700";
+                if (lead.status === "Lead Frio") statusClass = "status-badge-lead-frio";
+                if (lead.status === "Em Negociação") statusClass = "status-badge-em-negociacao";
+                if (lead.status === "Conquista") statusClass = "status-badge-conquista";
+
+                const logradouro = lead.street ? `${lead.street}, ${lead.number || 'S/N'}` : 'Endereço não cadastrado';
+
+                card.innerHTML = `
+                    <div class="cursor-pointer space-y-1.5 flex-1 open-details-click">
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="font-bold text-slate-800 text-base leading-tight break-words">${lead.name}</h4>
+                            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${statusClass}">${lead.status}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                            <i class="fas fa-map-marker-alt text-slate-400 w-3.5"></i>
+                            <span class="truncate">${logradouro}</span>
+                        </p>
+                        ${lead.phone ? `
+                        <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                            <i class="fas fa-phone-alt text-slate-400 w-3.5"></i>
+                            <span>${lead.phone}</span>
+                        </p>` : ''}
+                    </div>
+                    <div class="border-t border-slate-100 pt-2.5 flex items-center justify-end gap-2">
+                        <button class="agendar-visita-btn text-xs font-semibold text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-all" data-id="${lead.id}" data-name="${lead.name}">
+                            <i class="fas fa-calendar-plus mr-1"></i> Agendar
+                        </button>
+                        <button class="excluir-lead-btn text-xs font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-all" data-id="${lead.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Clique para abrir modal de detalhes individuais
+                card.querySelector('.open-details-click').addEventListener('click', () => openLeadDetailsModal(lead));
+                
+                // Botão de agendamento rápido de visita
+                card.querySelector('.agendar-visita-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openAddVisitModal(lead.id, lead.name);
+                });
+
+                // Exclusão de Lead
+                card.querySelector('.excluir-lead-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Tem certeza de que deseja deletar permanentemente o lead "${lead.name}"?`)) {
+                        deleteDoc(doc(db, "users", currentUserId, "leads", lead.id));
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // CADASTRO DE NOVO LEAD (FORMULÁRIO)
+        document.getElementById('add-lead-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('lead-name').value.trim();
+            const status = document.getElementById('lead-status').value; // Retorna "Conquista", "Lead Frio" ou "Em Negociação"
+            const phone = document.getElementById('lead-phone').value.trim();
             
-            const id = document.getElementById('lead-id').value;
-            const dados = {
-                uid: usuarioAtual.uid,
-                nome: document.getElementById('lead-nome').value,
-                documento: document.getElementById('lead-doc').value,
-                empresa: document.getElementById('lead-empresa').value,
-                endereco: document.getElementById('lead-endereco').value,
-                whatsApp: document.getElementById('lead-whats').value,
-                valor: parseFloat(document.getElementById('lead-valor').value) || 0,
-                dataCadastro: document.getElementById('lead-data').value,
-                status: document.getElementById('lead-status').value,
-                agendarVisita: chkAgendar.checked,
-                visitaData: chkAgendar.checked ? document.getElementById('visita-data').value : '',
-                visitaHora: chkAgendar.checked ? document.getElementById('visita-hora').value : '',
-                visitaEndereco: chkAgendar.checked ? document.getElementById('visita-endereco').value : '',
-                atualizadoEm: new Date().toISOString()
-            };
+            // Novos campos de endereço de campo estruturados
+            const street = document.getElementById('lead-street').value.trim();
+            const number = document.getElementById('lead-number').value.trim();
+            const neighborhood = document.getElementById('lead-neighborhood').value.trim();
+            const city = document.getElementById('lead-city').value.trim();
 
             try {
-                if(id) {
-                    await setDoc(doc(db, "leads", id), dados, { merge: true });
-                } else {
-                    await addDoc(collection(db, "leads"), dados);
-                }
-                formLead.reset();
-                document.getElementById('lead-id').value = '';
-                chkAgendar.checked = false;
-                boxAgendamento.classList.add('hidden');
-                definirDataHoje();
-            } catch(err) {
-                alert("Erro ao salvar: " + err.message);
+                await addDoc(collection(db, "users", currentUserId, "leads"), {
+                    name,
+                    status, // Protegido estruturalmente como singular "Conquista"
+                    phone,
+                    street,
+                    number,
+                    neighborhood,
+                    city,
+                    createdAt: new Date().toISOString()
+                });
+                closeAllModals();
+                document.getElementById('add-lead-form').reset();
+            } catch (err) {
+                console.error("Erro ao salvar lead: ", err);
+                alert("Erro ao salvar dados.");
             }
         });
 
-        // MODAL DE DETALHES INDIVIDUAIS DO CLIENTE
-        const modalDetalhes = document.getElementById('modal-detalhes');
-        
-        function abrirModalDetalhes(id) {
-            const lead = listaLeads.find(l => l.id === id);
-            if(!lead) return;
-
-            document.getElementById('modal-nome').textContent = lead.nome;
-            document.getElementById('modal-doc').textContent = lead.documento || 'Não informado';
-            document.getElementById('modal-empresa').textContent = lead.empresa || 'Não informada';
-            document.getElementById('modal-lead-endereco').textContent = lead.endereco || 'Não informado';
-            document.getElementById('modal-whats').textContent = lead.whatsApp || 'Não informado';
-            document.getElementById('modal-valor').textContent = formatarMoeda(lead.valor);
-            document.getElementById('modal-data').textContent = formatarDataBR(lead.dataCadastro);
+        // MODAL DE DETALHES COMPLETOS DO LEAD
+        function openLeadDetailsModal(lead) {
+            const content = document.getElementById('lead-details-content');
             
-            const badgeStatus = document.getElementById('modal-status');
-            badgeStatus.textContent = lead.status;
-            badgeStatus.className = "col-span-2 px-2 py-1 rounded text-xs font-bold w-fit " + obterClasseStatus(lead.status);
+            let statusClass = "bg-slate-100 text-slate-700";
+            if (lead.status === "Lead Frio") statusClass = "status-badge-lead-frio";
+            if (lead.status === "Em Negociação") statusClass = "status-badge-em-negociacao";
+            if (lead.status === "Conquista") statusClass = "status-badge-conquista";
 
-            const boxVisita = document.getElementById('modal-box-visita');
-            if (lead.agendarVisita && lead.visitaData) {
-                document.getElementById('modal-visita-datetime').textContent = `${formatarDataBR(lead.visitaData)} às ${lead.visitaHora || '--:--'}`;
-                document.getElementById('modal-visita-local').textContent = lead.visitaEndereco || 'Não informado';
-                boxVisita.classList.remove('hidden');
-            } else {
-                boxVisita.classList.add('hidden');
+            content.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-slate-800">${lead.name}</h4>
+                        <span class="text-xs text-slate-400 block mt-0.5">ID: ${lead.id}</span>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full ${statusClass}">${lead.status}</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <h5 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Dados de Contato</h5>
+                    <div class="grid grid-cols-1 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-sm text-slate-700"><span class="font-semibold text-slate-500">Telefone:</span> ${lead.phone || 'Não informado'}</p>
+                    </div>
+                    
+                    <h5 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Localização do Cliente</h5>
+                    <div class="grid grid-cols-1 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-sm text-slate-700">
+                        <p><span class="font-semibold text-slate-500">Logradouro:</span> ${lead.street || 'Não informado'}</p>
+                        <p><span class="font-semibold text-slate-500">Número:</span> ${lead.number || 'S/N'}</p>
+                        <p><span class="font-semibold text-slate-500">Bairro:</span> ${lead.neighborhood || 'Não informado'}</p>
+                        <p><span class="font-semibold text-slate-500">Cidade:</span> ${lead.city || 'Não informado'}</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex gap-2">
+                    <button id="modal-edit-status-btn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1">
+                        <i class="fas fa-edit"></i> Alterar Status
+                    </button>
+                </div>
+            `;
+
+            // Ação interna de troca rápida de status dentro da Ficha detalhada
+            document.getElementById('modal-edit-status-btn').addEventListener('click', async () => {
+                const novoStatus = prompt("Digite o novo status exato (Lead Frio, Em Negociação, Conquista):", lead.status);
+                if (novoStatus && ["Lead Frio", "Em Negociação", "Conquista"].includes(novoStatus)) {
+                    await updateDoc(doc(db, "users", currentUserId, "leads", lead.id), { status: novoStatus });
+                    closeAllModals();
+                } else if (novoStatus) {
+                    alert("Status Inválido! Use apenas: 'Lead Frio', 'Em Negociação' ou 'Conquista'.");
+                }
+            });
+
+            document.getElementById('lead-details-modal').classList.remove('hidden');
+        }
+
+        // AGENDAMENTO DE VISITAS DE CAMPO
+        function openAddVisitModal(leadId, leadName) {
+            document.getElementById('visit-lead-id').value = leadId;
+            document.getElementById('visit-lead-name').value = leadName;
+            document.getElementById('add-visit-modal').classList.remove('hidden');
+        }
+
+        document.getElementById('add-visit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const leadId = document.getElementById('visit-lead-id').value;
+            const leadName = document.getElementById('visit-lead-name').value;
+            const date = document.getElementById('visit-date').value; // Formato retornado: "YYYY-MM-DDTHH:MM"
+
+            try {
+                await addDoc(collection(db, "users", currentUserId, "visits"), {
+                    leadId,
+                    leadName,
+                    date,
+                    done: false,
+                    createdAt: new Date().toISOString()
+                });
+                closeAllModals();
+                document.getElementById('add-visit-form').reset();
+            } catch (err) {
+                console.error("Erro agendando visita: ", err);
+            }
+        });
+
+        // PROCESSAMENTO DA AGENDA DE VISITAS NA INTERFACE
+        function renderAgendaList(visits) {
+            const container = document.getElementById('agenda-container');
+            container.innerHTML = '';
+
+            if (visits.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white border border-dashed border-slate-200 rounded-xl p-8 text-center text-slate-400 text-sm">
+                        Nenhuma visita de campo agendada para o mês selecionado.
+                    </div>`;
+                return;
             }
 
-            modalDetalhes.classList.remove('hidden');
-        }
+            visits.forEach(visit => {
+                const item = document.createElement('div');
+                // Altera a opacidade visual do card de visita caso já esteja concluída
+                item.className = `bg-white p-4 rounded-xl border ${visit.done ? 'border-slate-100 opacity-65 bg-slate-50/50' : 'border-slate-200'} shadow-xs flex items-center justify-between gap-3 transition-all`;
 
-        document.getElementById('btn-fechar-modal').addEventListener('click', () => modalDetalhes.classList.add('hidden'));
-        document.getElementById('btn-modal-ok').addEventListener('click', () => modalDetalhes.classList.add('hidden'));
-
-        function atribuirEventosDinamicos() {
-            document.querySelectorAll('.btn-ver-detalhes').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = e.currentTarget.getAttribute('data-id');
-                    abrirModalDetalhes(id);
+                const dataFormatada = new Date(visit.date).toLocaleString('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
-            });
 
-            document.querySelectorAll('.select-status').forEach(sel => {
-                sel.addEventListener('change', async (e) => {
-                    const id = e.target.getAttribute('data-id');
-                    const novoStatus = e.target.value;
-                    
-                    e.target.className = `select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${obterClasseStatus(novoStatus)}`;
-                    
-                    await updateDoc(doc(db, "leads", id), { status: novoStatus });
-                });
-            });
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <button class="toggle-visit-done-btn text-xl ${visit.done ? 'text-green-500' : 'text-slate-300 hover:text-indigo-500'} transition-all flex-shrink-0" data-id="${visit.id}" data-done="${visit.done}">
+                            <i class="${visit.done ? 'fas fa-check-circle' : 'far fa-circle'}"></i>
+                        </button>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-slate-800 text-sm truncate ${visit.done ? 'line-through text-slate-400' : ''}">${visit.leadName}</h4>
+                            <p class="text-xs text-indigo-600 font-medium mt-0.5"><i class="far fa-clock mr-1"></i>${dataFormatada}</p>
+                        </div>
+                    </div>
+                    <button class="deletar-visita-btn text-slate-300 hover:text-rose-600 p-2 rounded-lg transition-all" data-id="${visit.id}">
+                        <i class="fas fa-calendar-times"></i>
+                    </button>
+                `;
 
-            document.querySelectorAll('.btn-editar').forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                // Alternador de Status Concluído/Aberto da visita
+                item.querySelector('.toggle-visit-done-btn').addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
-                    const lead = listaLeads.find(l => l.id === id);
-                    if(lead) {
-                        document.getElementById('lead-id').value = lead.id;
-                        document.getElementById('lead-nome').value = lead.nome;
-                        document.getElementById('lead-doc').value = lead.documento || '';
-                        document.getElementById('lead-empresa').value = lead.empresa || '';
-                        document.getElementById('lead-endereco').value = lead.endereco || '';
-                        document.getElementById('lead-whats').value = lead.whatsApp || '';
-                        document.getElementById('lead-valor').value = lead.valor;
-                        document.getElementById('lead-data').value = lead.dataCadastro;
-                        document.getElementById('lead-status').value = lead.status;
-                        
-                        chkAgendar.checked = lead.agendarVisita || false;
-                        boxAgendamento.classList.toggle('hidden', !lead.agendarVisita);
-                        document.getElementById('visita-data').value = lead.visitaData || '';
-                        document.getElementById('visita-hora').value = lead.visitaHora || '';
-                        document.getElementById('visita-endereco').value = lead.visitaEndereco || '';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const currentDone = e.currentTarget.getAttribute('data-done') === 'true';
+                    updateDoc(doc(db, "users", currentUserId, "visits", id), { done: !currentDone });
+                });
+
+                // Cancelamento/Exclusão do compromisso da Agenda
+                item.querySelector('.deletar-visita-btn').addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    if (confirm("Remover esta visita agendada permanentemente?")) {
+                        deleteDoc(doc(db, "users", currentUserId, "visits", id));
                     }
                 });
-            });
 
-            document.querySelectorAll('.btn-remover-visita').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const id = e.currentTarget.getAttribute('data-id');
-                    if(confirm("Deseja remover apenas o agendamento desta visita?")) {
-                        await updateDoc(doc(db, "leads", id), {
-                            agendarVisita: false,
-                            visitaData: '',
-                            visitaHora: '',
-                            visitaEndereco: ''
-                        });
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-excluir').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const id = e.currentTarget.getAttribute('data-id');
-                    if(confirm("Tem certeza que deseja excluir permanentemente este lead?")) {
-                        await deleteDoc(doc(db, "leads", id));
-                    }
-                });
+                container.appendChild(item);
             });
         }
 
-        document.getElementById('filtro-dia').addEventListener('input', renderizarDashboard);
-        document.getElementById('filtro-mes').addEventListener('change', renderizarDashboard);
-        document.getElementById('filtro-ano').addEventListener('input', renderizarDashboard);
-        document.getElementById('filtro-agenda-mes').addEventListener('change', renderizarDashboard);
+        // CONTROLADORES INTERNOS DA INTERFACE DO CLIENTE (DOM)
+        
+        // Gerenciamento de Cliques na Barra de Abas Inferior (Tabs)
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget.getAttribute('data-target');
+                
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(nb => {
+                    nb.classList.remove('text-indigo-600');
+                    nb.classList.add('text-slate-400');
+                });
 
-        document.getElementById('btn-limpar-filtros').addEventListener('click', () => {
-            document.getElementById('filtro-dia').value = '';
-            document.getElementById('filtro-mes').value = 'Todos';
-            document.getElementById('filtro-ano').value = '2026';
-            renderizarDashboard();
+                document.getElementById(target).classList.add('active');
+                e.currentTarget.classList.remove('text-slate-400');
+                e.currentTarget.classList.add('text-indigo-600');
+            });
         });
 
-        function exportarTabelaParaCSV(leadsArray, nomeArquivo) {
-            let csv = '\uFEFFLead;Empresa;Endereco Lead;Valor;Data Cadastro;Status;Data Visita;Endereco Visita\n';
-            leadsArray.forEach(l => {
-                csv += `"${l.nome}";"${l.empresa || ''}";"${l.endereco || ''}";"${l.valor}";"${l.dataCadastro}";"${l.status}";"${l.visitaData || ''}";"${l.visitaEndereco || ''}"\n`;
+        // Gerenciamento dos Botões de Filtro de Leads (Muda o Estado Ativo e Sincroniza)
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(fb => fb.classList.remove('active', 'bg-slate-100', 'text-slate-700'));
+                e.currentTarget.classList.add('active', 'bg-slate-100', 'text-slate-700');
+                activeFilter = e.currentTarget.getAttribute('data-status');
+                
+                // Força recarregamento local via re-escuta do snapshot armazenado
+                initRealtimeSync();
             });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", nomeArquivo);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        document.getElementById('btn-exportar-leads').addEventListener('click', () => exportarTabelaParaCSV(listaLeads, 'leads_vendas.csv'));
-        document.getElementById('btn-exportar-agenda').addEventListener('click', () => {
-            const comVisita = listaLeads.filter(l => l.agendarVisita);
-            exportarTabelaParaCSV(comVisita, 'agenda_visitas.csv');
         });
+
+        // Eventos de Abertura e Fechamento de Modais Gerais
+        document.getElementById('open-add-lead-modal').addEventListener('click', () => {
+            document.getElementById('add-lead-modal').classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', closeAllModals);
+        });
+
+        function closeAllModals() {
+            document.getElementById('add-lead-modal').classList.add('hidden');
+            document.getElementById('add-visit-modal').classList.add('hidden');
+            document.getElementById('lead-details-modal').classList.add('hidden');
+        }
     </script>
 </body>
 </html>
