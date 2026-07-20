@@ -11,6 +11,7 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .brand-green { color: #0f766e; }
+        .brand-amber { color: #b45309; }
         .bg-brand-green { background-color: #0f766e; }
         .bg-brand-green:hover { background-color: #115e59; }
         
@@ -19,6 +20,10 @@
         .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
         .status-conquista { background-color: #047857; color: #ffffff; font-weight: 600; }
         .status-recusado { background-color: #e11d48; color: #ffffff; font-weight: 600; }
+
+        /* Limitação de altura para as tabelas com cabeçalho fixo scrollable */
+        .tabela-container { max-height: 500px; overflow-y: auto; overflow-x: auto; position: relative; }
+        .tabela-container th { position: sticky; top: 0; z-index: 10; background-color: #f8fafc; box-shadow: inset 0 -1px 0 #e2e8f0; }
     </style>
 </head>
 <body class="p-4 md:p-8 text-slate-800">
@@ -59,34 +64,6 @@
             </div>
         </header>
 
-        <!-- FILTRAGEM POR DATA -->
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Filtrar Leads por Data de Cadastro</h3>
-            </div>
-            <div class="flex flex-wrap items-center gap-3 text-sm">
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Dia</label>
-                    <input type="number" id="filtro-dia" placeholder="--" min="1" max="31" class="w-16 border rounded px-2 py-1">
-                </div>
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Mês</label>
-                    <select id="filtro-mes" class="border rounded px-2 py-1">
-                        <option value="Todos">Todos</option>
-                        <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
-                        <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
-                        <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
-                        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-1">
-                    <label class="text-slate-500 text-xs">Ano</label>
-                    <input type="number" id="filtro-ano" value="2026" class="w-20 border rounded px-2 py-1">
-                </div>
-                <button id="btn-limpar-filtros" class="text-red-600 font-bold hover:underline ml-2">Limpar</button>
-            </div>
-        </div>
-
         <!-- INDICADORES / CARDS DE MÉRICAS -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
@@ -111,13 +88,12 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO + TABELA DE LEADS) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            
+        <!-- SEÇÃO CADASTRO (CRIAÇÃO DE NOVO LEAD E AGENDAMENTO) -->
+        <div class="grid grid-cols-1 gap-8 mb-6">
             <!-- FORMULÁRIO DE CADASTRO -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-fit">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Novo lead e agendamento</h2>
-                <form id="form-lead" class="space-y-4 text-sm">
+                <form id="form-lead" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <input type="hidden" id="lead-id">
                     
                     <div>
@@ -132,43 +108,43 @@
                         <label class="block font-semibold text-slate-700 mb-1">Empresa</label>
                         <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="block font-semibold text-slate-700 mb-1">Endereço do Lead</label>
                         <input type="text" id="lead-endereco" placeholder="Ex: Av. Paulista, 1000 - São Paulo" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">WhatsApp *</label>
-                            <input type="text" id="lead-whats" required placeholder="11999999999" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Valor (R$) *</label>
-                            <input type="number" id="lead-valor" required step="0.01" placeholder="5000" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Nome do Contato</label>
+                        <input type="text" id="lead-contato-nome" placeholder="Ex: Gerente Comercial" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Data cadastro *</label>
-                            <input type="date" id="lead-data" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Status *</label>
-                            <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
-                                <option value="Qualificação">Qualificação</option>
-                                <option value="Em Negociação">Em Negociação</option>
-                                <option value="Conquista">Conquista</option>
-                                <option value="Recusado">Recusado</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">WhatsApp / Celular *</label>
+                        <input type="text" id="lead-whats" required placeholder="Ex: 11999999999 (apenas números)" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Valor / TPV Prometido (R$) *</label>
+                        <input type="number" id="lead-valor" required step="0.01" placeholder="5000" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Data cadastro *</label>
+                        <input type="date" id="lead-data" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Status *</label>
+                        <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                            <option value="Qualificação">Qualificação</option>
+                            <option value="Em Negociação">Em Negociação</option>
+                            <option value="Conquista">Conquista</option>
+                            <option value="Recusado">Recusado</option>
+                        </select>
                     </div>
 
                     <!-- BLOCÃO DE AGENDAMENTO DE VISITA INTEGRADO -->
-                    <div class="border-t pt-3 mt-4">
+                    <div class="md:col-span-1 border rounded-lg p-3 bg-slate-50">
                         <label class="flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
                             <input type="checkbox" id="chk-agendar" class="rounded text-teal-600 focus:ring-teal-500">
                             Agendar visita comercial?
                         </label>
-                        <div id="box-agendamento" class="hidden space-y-3 mt-3 bg-slate-50 p-3 rounded-lg border border-dashed">
+                        <div id="box-agendamento" class="hidden space-y-2 mt-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600">Data da Visita</label>
@@ -181,40 +157,98 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600">Endereço da Visita</label>
-                                <input type="text" id="visita-endereco" placeholder="Rua, número, Bairro..." class="w-full border rounded px-2 py-1 text-xs">
+                                <input type="text" id="visita-endereco" placeholder="Rua, número..." class="w-full border rounded px-2 py-1 text-xs">
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition mt-4 shadow-sm">Salvar lead</button>
+                    <!-- BLOCÃO DE NEGOCIAÇÃO QUENTE INTEGRADO -->
+                    <div class="md:col-span-1 border rounded-lg p-3 bg-slate-50">
+                        <label class="flex items-center gap-2 font-semibold text-amber-800 cursor-pointer">
+                            <input type="checkbox" id="chk-agendar-quente" class="rounded text-amber-600 focus:ring-amber-500">
+                            Agendar Negociação Quente?
+                        </label>
+                        <div id="box-agendamento-quente" class="hidden space-y-2 mt-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600">Data Reunião</label>
+                                    <input type="date" id="quente-data" class="w-full border rounded px-2 py-1 text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600">Hora</label>
+                                    <input type="time" id="quente-hora" class="w-full border rounded px-2 py-1 text-xs">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600">Observações Fechamento</label>
+                                <input type="text" id="quente-obs" placeholder="Termos acordados, propostas..." class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-1 flex items-end">
+                        <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition shadow-sm h-fit">Salvar lead / Agendamentos</button>
+                    </div>
                 </form>
             </div>
+        </div>
 
-            <!-- TABELA: CONTROLE DE VENDAS ORIGINAL -->
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 overflow-x-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 border-b pb-4">
-                    <div class="flex items-center gap-2">
-                        <h2 class="text-xl font-bold text-slate-800">Controle de vendas</h2>
-                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full"><span id="count-conquistas">0</span> conquistas</span>
+        <!-- BOTÕES DE SELEÇÃO DE SEÇÃO (MENU DE NAVEGAÇÃO COMPATÍVEL) -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+            <button id="nav-btn-vendas" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-slate-800 text-white"><i class="fa-solid fa-chart-line mr-2"></i>Controle de Vendas</button>
+            <button id="nav-btn-visitas" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-2"></i>Agenda de Visitas</button>
+            <button id="nav-btn-quentes" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-amber-600 mr-2"></i>Agenda de Negociações Quentes</button>
+        </div>
+
+        <!-- 1° SEÇÃO: CONTROLE DE VENDAS -->
+        <div id="section-controle-vendas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 border-b pb-4">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-slate-800">Controle de vendas</h2>
+                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full"><span id="count-conquistas">0</span> conquistas</span>
+                </div>
+                <!-- FILTROS EXCLUSIVOS DA SEÇÃO CONTROLE DE VENDAS -->
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
+                        <input type="text" id="filtro-vendas-busca" placeholder="Pesquisar por nome..." class="pl-8 pr-3 py-1 border rounded bg-slate-50 focus:bg-white focus:outline-none">
                     </div>
-                    <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Dia</label>
+                        <input type="number" id="filtro-vendas-dia" placeholder="--" min="1" max="31" class="w-12 border rounded px-1.5 py-1 text-center">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Mês</label>
+                        <select id="filtro-vendas-mes" class="border rounded px-1.5 py-1">
+                            <option value="Todos">Todos</option>
+                            <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+                            <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+                            <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+                            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
+                    <button id="btn-ordem-vendas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Recentes</button>
+                    <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white px-3 py-1 rounded font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar</button>
                 </div>
+            </div>
 
-                <!-- 4 BOTÕES DE FILTROS DE STATUS CORRIGIDOS -->
-                <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
-                    <button id="btn-filtro-todos" class="px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition">Todos</button>
-                    <button id="btn-filtro-conquistas" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-emerald-700 hover:bg-slate-50 transition"><i class="fa-solid fa-trophy"></i> Conquista</button>
-                    <button id="btn-filtro-negociacoes" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-amber-700 hover:bg-slate-50 transition"><i class="fa-solid fa-comments"></i> Em Negociação</button>
-                    <button id="btn-filtro-qualificacao" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-blue-700 hover:bg-slate-50 transition"><i class="fa-solid fa-magnifying-glass"></i> Qualificação</button>
-                    <button id="btn-filtro-recusados" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-rose-700 hover:bg-slate-50 transition"><i class="fa-solid fa-circle-xmark"></i> Recusados</button>
-                </div>
-                
+            <!-- 4 BOTÕES DE FILTROS DE STATUS CORRIGIDOS -->
+            <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
+                <button id="btn-filtro-todos" class="px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition">Todos</button>
+                <button id="btn-filtro-conquistas" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-emerald-700 hover:bg-slate-50 transition"><i class="fa-solid fa-trophy"></i> Conquista</button>
+                <button id="btn-filtro-negociacoes" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-amber-700 hover:bg-slate-50 transition"><i class="fa-solid fa-comments"></i> Em Negociação</button>
+                <button id="btn-filtro-qualificacao" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-blue-700 hover:bg-slate-50 transition"><i class="fa-solid fa-magnifying-glass"></i> Qualificação</button>
+                <button id="btn-filtro-recusados" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-rose-700 hover:bg-slate-50 transition"><i class="fa-solid fa-circle-xmark"></i> Recusados</button>
+            </div>
+            
+            <div class="tabela-container border rounded-lg">
                 <table class="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                         <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
                             <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
-                            <th class="p-3">Valor</th>
-                            <th class="p-3">Data</th>
+                            <th class="p-3">Valor / TPV</th>
+                            <th class="p-3">Data Cadastro</th>
                             <th class="p-3">Status</th>
                             <th class="p-3 text-center">Ações</th>
                         </tr>
@@ -226,37 +260,101 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: AGENDA DE VISITAS ORIGINAL -->
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-2">
+        <!-- 2° SEÇÃO: AGENDA DE VISITAS -->
+        <div id="section-agenda-visitas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-3">
                     <h2 class="text-xl font-bold text-slate-800">Agenda de visitas</h2>
                     <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Em negociação: R$ <span id="val-em-negociacao">0,00</span></span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <!-- SELETOR DA AGENDA POR MÊS -->
-                    <select id="filtro-agenda-mes" class="border rounded px-2 py-1 text-xs">
-                        <option value="Todos">Todos os meses</option>
-                        <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
-                        <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
-                        <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
-                        <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
-                    </select>
-                    <button id="btn-exportar-agenda" class="bg-teal-800 hover:bg-teal-900 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+                <!-- FILTROS EXCLUSIVOS DA SEÇÃO AGENDA DE VISITAS -->
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
+                        <input type="text" id="filtro-visitas-busca" placeholder="Pesquisar por nome..." class="pl-8 pr-3 py-1 border rounded bg-slate-50 focus:bg-white focus:outline-none">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Dia</label>
+                        <input type="number" id="filtro-visitas-dia" placeholder="--" min="1" max="31" class="w-12 border rounded px-1.5 py-1 text-center">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Mês</label>
+                        <select id="filtro-agenda-mes" class="border rounded px-2 py-1 text-xs">
+                            <option value="Todos">Todos os meses</option>
+                            <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+                            <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+                            <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+                            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
+                    <button id="btn-ordem-visitas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Próximas</button>
+                    <button id="btn-exportar-agenda" class="bg-teal-800 hover:bg-teal-900 text-white px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar</button>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="tabela-container border rounded-lg">
                 <table class="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                         <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
                             <th class="p-3">Lead / Empresa</th>
-                            <th class="p-3">Data / Hora</th>
-                            <th class="p-3">Endereço</th>
+                            <th class="p-3">Data / Hora Visita</th>
+                            <th class="p-3">Endereço Visita</th>
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-agenda" class="text-sm divide-y">
+                        <!-- Gerado dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3° SEÇÃO: AGENDA DE NEGOCIAÇÕES QUENTES -->
+        <div id="section-negociacoes-quentes" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-amber-800"><i class="fa-solid fa-fire text-amber-600"></i> Negociações Quentes</h2>
+                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">Prestes a Fechar negócio</span>
+                </div>
+                <!-- FILTROS EXCLUSIVOS DA SEÇÃO NEGOCIAÇÕES QUENTES -->
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
+                        <input type="text" id="filtro-quentes-busca" placeholder="Pesquisar por nome..." class="pl-8 pr-3 py-1 border rounded bg-slate-50 focus:bg-white focus:outline-none">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Dia</label>
+                        <input type="number" id="filtro-quentes-dia" placeholder="--" min="1" max="31" class="w-12 border rounded px-1.5 py-1 text-center">
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <label class="text-slate-500">Mês</label>
+                        <select id="filtro-quentes-mes" class="border rounded px-2 py-1 text-xs">
+                            <option value="Todos">Todos os meses</option>
+                            <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+                            <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+                            <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+                            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
+                    <button id="btn-ordem-quentes" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Próximas</button>
+                </div>
+            </div>
+
+            <div class="tabela-container border rounded-lg">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="border-b text-xs font-bold text-amber-800 uppercase tracking-wider bg-amber-50/50">
+                            <th class="p-3">Nome / CNPJ / CPF</th>
+                            <th class="p-3">Endereço Lead</th>
+                            <th class="p-3">Contato / Celular</th>
+                            <th class="p-3">TPV Prometido</th>
+                            <th class="p-3">Reunião / Obs</th>
+                            <th class="p-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-quentes" class="text-sm divide-y">
                         <!-- Gerado dinamicamente -->
                     </tbody>
                 </table>
@@ -290,11 +388,18 @@
                     <span id="modal-lead-endereco" class="col-span-2 text-slate-800"></span>
                 </div>
                 <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">WhatsApp:</span>
-                    <span id="modal-whats" class="col-span-2 text-teal-700 font-medium"></span>
+                    <span class="font-semibold text-slate-500">Contato / Cargo:</span>
+                    <span id="modal-contato-nome" class="col-span-2 text-slate-800"></span>
+                </div>
+                <div class="grid grid-cols-3 border-b border-slate-100 pb-2 flex items-center">
+                    <span class="font-semibold text-slate-500">WhatsApp/Cel:</span>
+                    <div id="modal-whats-container" class="col-span-2 flex items-center gap-2">
+                        <span id="modal-whats" class="text-teal-700 font-medium"></span>
+                        <a id="modal-whats-link" target="_blank" class="bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded hover:bg-emerald-700 transition"><i class="fa-brands fa-whatsapp"></i> Conversar</a>
+                    </div>
                 </div>
                 <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
-                    <span class="font-semibold text-slate-500">Valor Estimado:</span>
+                    <span class="font-semibold text-slate-500">Valor / TPV:</span>
                     <span id="modal-valor" class="col-span-2 font-bold text-slate-800"></span>
                 </div>
                 <div class="grid grid-cols-3 border-b border-slate-100 pb-2">
@@ -306,14 +411,20 @@
                     <span id="modal-status" class="col-span-2 px-2 py-0.5 rounded text-xs w-fit"></span>
                 </div>
                 
-                <div id="modal-box-visita" class="bg-slate-50 p-3 rounded-lg border border-dashed mt-4 hidden">
-                    <h4 class="font-bold text-xs text-slate-600 uppercase tracking-wider mb-2"><i class="fa-solid fa-calendar-days"></i> Detalhes da Visita Agendada</h4>
+                <div id="modal-box-visita" class="bg-slate-50 p-3 rounded-lg border border-dashed mt-2 hidden">
+                    <h4 class="font-bold text-xs text-slate-600 uppercase tracking-wider mb-2"><i class="fa-solid fa-calendar-days text-teal-700"></i> Detalhes da Visita Agendada</h4>
                     <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
                     <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
                 </div>
+
+                <div id="modal-box-quente" class="bg-amber-50/50 p-3 rounded-lg border border-dashed border-amber-300 mt-2 hidden">
+                    <h4 class="font-bold text-xs text-amber-800 uppercase tracking-wider mb-2"><i class="fa-solid fa-fire text-amber-600"></i> Agendamento Negociação Quente</h4>
+                    <p class="text-xs text-slate-700"><strong>Reunião:</strong> <span id="modal-quente-datetime"></span></p>
+                    <p class="text-xs text-slate-700 mt-1"><strong>Observação Fechamento:</strong> <span id="modal-quente-obs"></span></p>
+                </div>
             </div>
             
-            <button id="btn-modal-ok" class="w-full bg-slate-800 text-white font-bold py-2 rounded-xl mt-6 hover:bg-slate-700 transition">Fechar</button>
+            <button id="btn-modal-ok" class="w-full bg-slate-800 text-white font-bold py-2 rounded-xl mt-6 hover:bg-slate-700 transition">Fechar Ficha</button>
         </div>
     </div>
 
@@ -344,11 +455,19 @@
         let filtroStatusAtual = 'Todos';
         let tempoInatividade;
 
+        // Controle de ordenações por seção ('desc' = recente/próximo, 'asc' = antigo/distante)
+        let ordemVendas = 'desc';
+        let ordemVisitas = 'asc';
+        let ordemQuentes = 'asc';
+
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         const formLead = document.getElementById('form-lead');
+        
         const chkAgendar = document.getElementById('chk-agendar');
         const boxAgendamento = document.getElementById('box-agendamento');
+        const chkAgendarQuente = document.getElementById('chk-agendar-quente');
+        const boxAgendamentoQuente = document.getElementById('box-agendamento-quente');
 
         // FORMATAÇÃO DE DINHEIRO
         function formatarMoeda(valor) {
@@ -371,7 +490,14 @@
             return `${partes[2]}/${partes[1]}/${partes[0]}`;
         }
 
-        // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR Exactamente as cores dos filtros
+        // RETORNA A URL DO WHATSAPP APENAS COM NÚMEROS
+        function criarLinkWhatsapp(numeroStr) {
+            if(!numeroStr) return '#';
+            const limpo = numeroStr.replace(/\D/g, '');
+            return `https://wa.me/${limpo}`;
+        }
+
+        // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR
         function obterClasseStatus(status) {
             if (status === 'Qualificação') return 'status-qualificacao';
             if (status === 'Em Negociação') return 'status-negociacao';
@@ -401,6 +527,54 @@
 
         chkAgendar.addEventListener('change', (e) => {
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
+        });
+
+        chkAgendarQuente.addEventListener('change', (e) => {
+            boxAgendamentoQuente.classList.toggle('hidden', !e.target.checked);
+        });
+
+        // MANIPULAÇÃO DA ALTERNÂNCIA DE SEÇÕES COMPLETA POR BOTÕES
+        const navVendas = document.getElementById('nav-btn-vendas');
+        const navVisitas = document.getElementById('nav-btn-visitas');
+        const navQuentes = document.getElementById('nav-btn-quentes');
+
+        const secVendas = document.getElementById('section-controle-vendas');
+        const secVisitas = document.getElementById('section-agenda-visitas');
+        const secQuentes = document.getElementById('section-negociacoes-quentes');
+
+        function alternarSecao(abaAtiva, secaoAtiva) {
+            [navVendas, navVisitas, navQuentes].forEach(b => {
+                b.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
+            });
+            [secVendas, secVisitas, secQuentes].forEach(s => s.classList.add('hidden'));
+            
+            secaoAtiva.classList.remove('hidden');
+            if(abaAtiva === navVendas) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-slate-800 text-white";
+            if(abaAtiva === navVisitas) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-teal-700 text-white";
+            if(abaAtiva === navQuentes) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-amber-600 text-white";
+        }
+
+        navVendas.addEventListener('click', () => alternarSecao(navVendas, secVendas));
+        navVisitas.addEventListener('click', () => alternarSecao(navVisitas, secVisitas));
+        navQuentes.addEventListener('click', () => alternarSecao(navQuentes, secQuentes));
+
+        // ALTERNÂNCIA DE BOTÕES DE ORDENAÇÃO
+        document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
+            ordemVendas = ordemVendas === 'desc' ? 'asc' : 'desc';
+            e.currentTarget.innerHTML = ordemVendas === 'desc' ? '<i class="fa-solid fa-sort-down"></i> Mais Recentes' : '<i class="fa-solid fa-sort-up"></i> Mais Antigos';
+            renderizarDashboard();
+        });
+
+        document.getElementById('btn-ordem-visitas').addEventListener('click', (e) => {
+            ordemVisitas = ordemVisitas === 'asc' ? 'desc' : 'asc';
+            e.currentTarget.innerHTML = ordemVisitas === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
+            renderizarDashboard();
+        });
+
+        document.getElementById('btn-ordem-quentes').addEventListener('click', (e) => {
+            ordemQuentes = ordemQuentes === 'asc' ? 'desc' : 'asc';
+            e.currentTarget.innerHTML = ordemQuentes === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
+            renderizarDashboard();
         });
 
         document.getElementById('btn-alternar-auth').addEventListener('click', () => {
@@ -470,7 +644,7 @@
             });
         }
 
-        // INTERFACE DO CLIQUE DOS BOTÕES DE FILTRO DE STATUS (Unificado para 'Conquista')
+        // INTERFACE DO CLIQUE DOS BOTÕES DE FILTRO DE STATUS
         function configurarFiltrosStatus() {
             const botoes = {
                 'Todos': document.getElementById('btn-filtro-todos'),
@@ -497,24 +671,36 @@
         }
         configurarFiltrosStatus();
 
-        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE
+        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE COM FILTROS INDEPENDENTES
         function renderizarDashboard() {
-            const fDia = document.getElementById('filtro-dia').value;
-            const fMes = document.getElementById('filtro-mes').value;
-            const fAno = document.getElementById('filtro-ano').value;
+            
+            // 1. FILTROS INDEPENDENTES - SEÇÃO CONTROLE DE VENDAS
+            const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
+            const fVendasDia = document.getElementById('filtro-vendas-dia').value;
+            const fVendasMes = document.getElementById('filtro-vendas-mes').value;
 
-            // FILTRAGEM DO CONTROLE DE VENDAS
-            const leadsControleFiltrados = listaLeads.filter(l => {
-                if(!l.dataCadastro) return true;
-                const [ano, mes, dia] = l.dataCadastro.split('-');
-                if(fDia && parseInt(fDia) !== parseInt(dia)) return false;
-                if(fMes !== 'Todos' && fMes !== mes) return false;
-                if(fAno && parseInt(fAno) !== parseInt(ano)) return false;
+            let leadsControleFiltrados = listaLeads.filter(l => {
                 if(filtroStatusAtual !== 'Todos' && l.status !== filtroStatusAtual) return false;
+                if(fVendasBusca && !l.nome.toLowerCase().includes(fVendasBusca)) return false;
+                
+                if(l.dataCadastro) {
+                    const [ano, mes, dia] = l.dataCadastro.split('-');
+                    if(fVendasDia && parseInt(fVendasDia) !== parseInt(dia)) return false;
+                    if(fVendasMes !== 'Todos' && fVendasMes !== mes) return false;
+                } else if (fVendasDia || fVendasMes !== 'Todos') {
+                    return false;
+                }
                 return true;
             });
 
-            // Métricas calculadas em cima de TODOS os leads gerais do usuário
+            // Aplicar ordenação por data cadastro na seção vendas
+            leadsControleFiltrados.sort((a, b) => {
+                const dataA = a.dataCadastro || '';
+                const dataB = b.dataCadastro || '';
+                return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
+            });
+
+            // MÉRICAS GERAIS CALCULADAS EM CIMA DE TODOS OS LEADS DO USUÁRIO
             let totalLeads = listaLeads.length;
             let emNegociacao = 0;
             let totalNegociacaoValor = 0;
@@ -545,13 +731,13 @@
             leadsControleFiltrados.forEach(l => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
-                
                 const classeCorStatus = obterClasseStatus(l.status);
+                const urlWhats = criarLinkWhatsapp(l.whatsApp);
 
                 tr.innerHTML = `
                     <td class="p-3">
                         <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
-                            <div class="font-bold text-slate-800 hover:text-teal-700 hover:underline cursor-pointer flex items-center gap-1.5">
+                            <div class="font-bold text-slate-800 hover:brand-green hover:underline cursor-pointer flex items-center gap-1.5">
                                 <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
                             </div>
                             <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
@@ -567,7 +753,8 @@
                             <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
                         </select>
                     </td>
-                    <td class="p-3 text-center flex justify-center gap-3 text-base mt-2">
+                    <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                        <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
                         <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
                     </td>
@@ -575,39 +762,113 @@
                 tbodyLeads.appendChild(tr);
             });
 
-            // FILTRAGEM DA AGENDA INDEPENDENTE
+            // 2. FILTROS INDEPENDENTES - SEÇÃO AGENDA DE VISITAS
             const tbodyAgenda = document.getElementById('tbody-agenda');
             tbodyAgenda.innerHTML = '';
 
-            const filtroAgendaMes = document.getElementById('filtro-agenda-mes').value;
+            const fVisitasBusca = document.getElementById('filtro-visitas-busca').value.toLowerCase();
+            const fVisitasDia = document.getElementById('filtro-visitas-dia').value;
+            const fVisitasMes = document.getElementById('filtro-agenda-mes').value;
 
-            listaLeads.forEach(l => {
-                if(l.agendarVisita && l.visitaData) {
-                    if(filtroAgendaMes !== 'Todos') {
-                        const mesExtraido = l.visitaData.split('-')[1];
-                        if (mesExtraido !== filtroAgendaMes) return;
-                    }
+            let leadsVisitasFiltrados = listaLeads.filter(l => {
+                if(!l.agendarVisita || !l.visitaData) return false;
+                if(fVisitasBusca && !l.nome.toLowerCase().includes(fVisitasBusca)) return false;
+                
+                const [ano, mes, dia] = l.visitaData.split('-');
+                if(fVisitasDia && parseInt(fVisitasDia) !== parseInt(dia)) return false;
+                if(fVisitasMes !== 'Todos' && mes !== fVisitasMes) return false;
+                
+                return true;
+            });
 
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-3">
-                            <div class="font-bold text-slate-800">${l.nome}</div>
-                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
-                        </td>
-                        <td class="p-3">
-                            <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
-                            <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
-                        </td>
-                        <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${l.visitaEndereco || 'Não informado'}</td>
-                        <td class="p-3 text-center flex justify-center gap-3 text-base mt-1">
-                            <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Visita"><i class="fa-solid fa-calendar-xmark"></i></button>
-                            <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    `;
-                    tbodyAgenda.appendChild(tr);
-                }
+            // Aplicar ordenação por data da visita
+            leadsVisitasFiltrados.sort((a, b) => {
+                const dataA = a.visitaData + 'T' + (a.visitaHora || '00:00');
+                const dataB = b.visitaData + 'T' + (b.visitaHora || '00:00');
+                return ordemVisitas === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
+            });
+
+            leadsVisitasFiltrados.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                const urlWhats = criarLinkWhatsapp(l.whatsApp);
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-slate-800">${l.nome}</div>
+                        <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
+                        <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
+                    </td>
+                    <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${l.visitaEndereco || 'Não informado'}</td>
+                    <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                        <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
+                        <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Visita"><i class="fa-solid fa-calendar-xmark"></i></button>
+                        <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbodyAgenda.appendChild(tr);
+            });
+
+            // 3. FILTROS INDEPENDENTES - SEÇÃO AGENDA DE NEGOCIAÇÕES QUENTES
+            const tbodyQuentes = document.getElementById('tbody-quentes');
+            tbodyQuentes.innerHTML = '';
+
+            const fQuentesBusca = document.getElementById('filtro-quentes-busca').value.toLowerCase();
+            const fQuentesDia = document.getElementById('filtro-quentes-dia').value;
+            const fQuentesMes = document.getElementById('filtro-quentes-mes').value;
+
+            let leadsQuentesFiltrados = listaLeads.filter(l => {
+                if(!l.agendarQuente || !l.quenteData) return false;
+                if(fQuentesBusca && !l.nome.toLowerCase().includes(fQuentesBusca)) return false;
+                
+                const [ano, mes, dia] = l.quenteData.split('-');
+                if(fQuentesDia && parseInt(fQuentesDia) !== parseInt(dia)) return false;
+                if(fQuentesMes !== 'Todos' && mes !== fQuentesMes) return false;
+                
+                return true;
+            });
+
+            // Aplicar ordenação por data da reunião quente
+            leadsQuentesFiltrados.sort((a, b) => {
+                const dataA = a.quenteData + 'T' + (a.quenteHora || '00:00');
+                const dataB = b.quenteData + 'T' + (b.quenteHora || '00:00');
+                return ordemQuentes === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
+            });
+
+            leadsQuentesFiltrados.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-amber-50/30 transition bg-amber-50/10";
+                const urlWhats = criarLinkWhatsapp(l.whatsApp);
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-slate-900">${l.nome}</div>
+                        <div class="text-xs text-slate-500">Doc: ${l.documento || 'Não informado'}</div>
+                    </td>
+                    <td class="p-3 text-xs text-slate-600">${l.endereco || 'Não informado'}</td>
+                    <td class="p-3 text-xs">
+                        <div class="font-medium text-slate-800">${l.contatoNome || 'Nome não informado'}</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-slate-600 font-bold">${l.whatsApp || ''}</span>
+                            <a href="${urlWhats}" target="_blank" class="bg-emerald-600 text-white rounded px-1.5 py-0.5 font-bold text-[10px] hover:bg-emerald-700 transition"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                        </div>
+                    </td>
+                    <td class="p-3 font-bold text-amber-700">${formatarMoeda(l.valor)}</td>
+                    <td class="p-3 text-xs">
+                        <div class="font-bold text-slate-700"><i class="fa-solid fa-clock text-amber-500"></i> ${formatarDataBR(l.quenteData)} às ${l.quenteHora || '--:--'}</div>
+                        <div class="text-slate-500 italic truncate max-w-[180px]">${l.quenteObs || 'Sem observações'}</div>
+                    </td>
+                    <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                        <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-remover-quente text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover dos Quantes"><i class="fa-solid fa-fire-flip"></i></button>
+                        <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbodyQuentes.appendChild(tr);
             });
 
             atribuirEventosDinamicos();
@@ -624,14 +885,24 @@
                 documento: document.getElementById('lead-doc').value,
                 empresa: document.getElementById('lead-empresa').value,
                 endereco: document.getElementById('lead-endereco').value,
+                contatoNome: document.getElementById('lead-contato-nome').value,
                 whatsApp: document.getElementById('lead-whats').value,
                 valor: parseFloat(document.getElementById('lead-valor').value) || 0,
                 dataCadastro: document.getElementById('lead-data').value,
                 status: document.getElementById('lead-status').value,
+                
+                // Visitas padrão
                 agendarVisita: chkAgendar.checked,
                 visitaData: chkAgendar.checked ? document.getElementById('visita-data').value : '',
                 visitaHora: chkAgendar.checked ? document.getElementById('visita-hora').value : '',
                 visitaEndereco: chkAgendar.checked ? document.getElementById('visita-endereco').value : '',
+                
+                // Negociações Quentes
+                agendarQuente: chkAgendarQuente.checked,
+                quenteData: chkAgendarQuente.checked ? document.getElementById('quente-data').value : '',
+                quenteHora: chkAgendarQuente.checked ? document.getElementById('quente-hora').value : '',
+                quenteObs: chkAgendarQuente.checked ? document.getElementById('quente-obs').value : '',
+                
                 atualizadoEm: new Date().toISOString()
             };
 
@@ -643,8 +914,12 @@
                 }
                 formLead.reset();
                 document.getElementById('lead-id').value = '';
+                
                 chkAgendar.checked = false;
                 boxAgendamento.classList.add('hidden');
+                chkAgendarQuente.checked = false;
+                boxAgendamentoQuente.classList.add('hidden');
+                
                 definirDataHoje();
             } catch(err) {
                 alert("Erro ao salvar: " + err.message);
@@ -662,14 +937,25 @@
             document.getElementById('modal-doc').textContent = lead.documento || 'Não informado';
             document.getElementById('modal-empresa').textContent = lead.empresa || 'Não informada';
             document.getElementById('modal-lead-endereco').textContent = lead.endereco || 'Não informado';
+            document.getElementById('modal-contato-nome').textContent = lead.contatoNome || 'Não informado';
             document.getElementById('modal-whats').textContent = lead.whatsApp || 'Não informado';
             document.getElementById('modal-valor').textContent = formatarMoeda(lead.valor);
             document.getElementById('modal-data').textContent = formatarDataBR(lead.dataCadastro);
+            
+            // Link dinâmico do WhatsApp também na Ficha Modal do cliente
+            const linkModalWhats = document.getElementById('modal-whats-link');
+            if(lead.whatsApp) {
+                linkModalWhats.href = criarLinkWhatsapp(lead.whatsApp);
+                linkModalWhats.classList.remove('hidden');
+            } else {
+                linkModalWhats.classList.add('hidden');
+            }
             
             const badgeStatus = document.getElementById('modal-status');
             badgeStatus.textContent = lead.status;
             badgeStatus.className = "col-span-2 px-2 py-1 rounded text-xs font-bold w-fit " + obterClasseStatus(lead.status);
 
+            // Bloco Visita comum no Modal
             const boxVisita = document.getElementById('modal-box-visita');
             if (lead.agendarVisita && lead.visitaData) {
                 document.getElementById('modal-visita-datetime').textContent = `${formatarDataBR(lead.visitaData)} às ${lead.visitaHora || '--:--'}`;
@@ -677,6 +963,16 @@
                 boxVisita.classList.remove('hidden');
             } else {
                 boxVisita.classList.add('hidden');
+            }
+
+            // Bloco Quente no Modal
+            const boxQuente = document.getElementById('modal-box-quente');
+            if(lead.agendarQuente && lead.quenteData) {
+                document.getElementById('modal-quente-datetime').textContent = `${formatarDataBR(lead.quenteData)} às ${lead.quenteHora || '--:--'}`;
+                document.getElementById('modal-quente-obs').textContent = lead.quenteObs || 'Sem observações';
+                boxQuente.classList.remove('hidden');
+            } else {
+                boxQuente.classList.add('hidden');
             }
 
             modalDetalhes.classList.remove('hidden');
@@ -714,16 +1010,26 @@
                         document.getElementById('lead-doc').value = lead.documento || '';
                         document.getElementById('lead-empresa').value = lead.empresa || '';
                         document.getElementById('lead-endereco').value = lead.endereco || '';
+                        document.getElementById('lead-contato-nome').value = lead.contatoNome || '';
                         document.getElementById('lead-whats').value = lead.whatsApp || '';
                         document.getElementById('lead-valor').value = lead.valor;
                         document.getElementById('lead-data').value = lead.dataCadastro;
                         document.getElementById('lead-status').value = lead.status;
                         
+                        // Setar visita comum
                         chkAgendar.checked = lead.agendarVisita || false;
                         boxAgendamento.classList.toggle('hidden', !lead.agendarVisita);
                         document.getElementById('visita-data').value = lead.visitaData || '';
                         document.getElementById('visita-hora').value = lead.visitaHora || '';
                         document.getElementById('visita-endereco').value = lead.visitaEndereco || '';
+                        
+                        // Setar reunião quente
+                        chkAgendarQuente.checked = lead.agendarQuente || false;
+                        boxAgendamentoQuente.classList.toggle('hidden', !lead.agendarQuente);
+                        document.getElementById('quente-data').value = lead.quenteData || '';
+                        document.getElementById('quente-hora').value = lead.quenteHora || '';
+                        document.getElementById('quente-obs').value = lead.quenteObs || '';
+
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 });
@@ -743,27 +1049,42 @@
                 });
             });
 
+            document.querySelectorAll('.btn-remover-quente').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    if(confirm("Deseja remover o agendamento de Negociação Quente deste cliente?")) {
+                        await updateDoc(doc(db, "leads", id), {
+                            agendarQuente: false,
+                            quenteData: '',
+                            quenteHora: '',
+                            quenteObs: ''
+                        });
+                    }
+                });
+            });
+
             document.querySelectorAll('.btn-excluir').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
-                    if(confirm("Tem certeza que deseja excluir permanentemente este lead?")) {
+                    if(confirm("Tem certeza que deseja excluir permanentemente este lead e seus históricos?")) {
                         await deleteDoc(doc(db, "leads", id));
                     }
                 });
             });
         }
 
-        document.getElementById('filtro-dia').addEventListener('input', renderizarDashboard);
-        document.getElementById('filtro-mes').addEventListener('change', renderizarDashboard);
-        document.getElementById('filtro-ano').addEventListener('input', renderizarDashboard);
+        // Ouvintes dos filtros independentes por seções para renderização instantânea
+        document.getElementById('filtro-vendas-busca').addEventListener('input', renderizarDashboard);
+        document.getElementById('filtro-vendas-dia').addEventListener('input', renderizarDashboard);
+        document.getElementById('filtro-vendas-mes').addEventListener('change', renderizarDashboard);
+
+        document.getElementById('filtro-visitas-busca').addEventListener('input', renderizarDashboard);
+        document.getElementById('filtro-visitas-dia').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-agenda-mes').addEventListener('change', renderizarDashboard);
 
-        document.getElementById('btn-limpar-filtros').addEventListener('click', () => {
-            document.getElementById('filtro-dia').value = '';
-            document.getElementById('filtro-mes').value = 'Todos';
-            document.getElementById('filtro-ano').value = '2026';
-            renderizarDashboard();
-        });
+        document.getElementById('filtro-quentes-busca').addEventListener('input', renderizarDashboard);
+        document.getElementById('filtro-quentes-dia').addEventListener('input', renderizarDashboard);
+        document.getElementById('filtro-quentes-mes').addEventListener('change', renderizarDashboard);
 
         function exportarTabelaParaCSV(leadsArray, nomeArquivo) {
             let csv = '\uFEFFLead;Empresa;Endereco Lead;Valor;Data Cadastro;Status;Data Visita;Endereco Visita\n';
