@@ -18,6 +18,7 @@
         /* Cores dinâmicas para os selects de status idênticas aos botões */
         .status-qualificacao { background-color: #2563eb; color: #ffffff; font-weight: 600; }
         .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
+        .status-quente { background-color: #f97316; color: #ffffff; font-weight: 600; }
         .status-conquista { background-color: #047857; color: #ffffff; font-weight: 600; }
         .status-recusado { background-color: #e11d48; color: #ffffff; font-weight: 600; }
 
@@ -64,33 +65,42 @@
             </div>
         </header>
 
-        <!-- INDICADORES / CARDS DE MÉRICAS -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+        <!-- INDICADORES / CARDS DE MÉTRICAS COM VALOR DE TPV -->
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 text-center">
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-slate-400 uppercase">Leads Criados</span>
-                <div id="metric-leads" class="text-2xl font-extrabold text-slate-700 mt-1">0</div>
+                <div id="metric-leads" class="text-xl font-extrabold text-slate-700 mt-0.5">0</div>
+                <div id="metric-leads-val" class="text-[11px] text-slate-400 font-medium">R$ 0,00</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
-                <span class="text-xs font-bold text-amber-600 uppercase">Em Negociação</span>
-                <div id="metric-negociacao" class="text-2xl font-extrabold text-amber-600 mt-1">0</div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-xs font-bold text-blue-600 uppercase">Qualificação</span>
+                <div id="metric-qualificacao" class="text-xl font-extrabold text-blue-600 mt-0.5">0</div>
+                <div id="metric-qualificacao-val" class="text-[11px] text-blue-400 font-medium">R$ 0,00</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-xs font-bold text-orange-600 uppercase">Quentes</span>
+                <div id="metric-quentes" class="text-xl font-extrabold text-orange-600 mt-0.5">0</div>
+                <div id="metric-quentes-val" class="text-[11px] text-orange-400 font-medium">R$ 0,00</div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-emerald-600 uppercase">Conquistas</span>
-                <div id="metric-convertidos" class="text-2xl font-extrabold text-emerald-600 mt-1">0</div>
+                <div id="metric-convertidos" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
+                <div id="metric-convertidos-val" class="text-[11px] text-emerald-500 font-medium">R$ 0,00</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-rose-600 uppercase">Recusados</span>
-                <div id="metric-recusados" class="text-2xl font-extrabold text-rose-600 mt-1">0</div>
+                <div id="metric-recusados" class="text-xl font-extrabold text-rose-600 mt-0.5">0</div>
+                <div id="metric-recusados-val" class="text-[11px] text-rose-400 font-medium">R$ 0,00</div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm col-span-2 md:col-span-1">
-                <span class="text-xs font-bold text-teal-700 uppercase">Conversão Geral</span>
-                <div id="metric-conversao" class="text-2xl font-extrabold text-teal-700 mt-1">0%</div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
+                <span class="text-xs font-bold text-teal-700 uppercase">Conversão</span>
+                <div id="metric-conversao" class="text-xl font-extrabold text-teal-700 mt-0.5">0%</div>
+                <div class="text-[11px] text-teal-600 font-medium">Taxa Geral</div>
             </div>
         </div>
 
         <!-- SEÇÃO CADASTRO (CRIAÇÃO DE NOVO LEAD E AGENDAMENTO) -->
         <div class="grid grid-cols-1 gap-8 mb-6">
-            <!-- FORMULÁRIO DE CADASTRO -->
             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Novo lead e agendamento</h2>
                 <form id="form-lead" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -102,7 +112,7 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">CNPJ ou CPF</label>
-                        <input type="text" id="lead-doc" placeholder="Ex: 000.000.000-00" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                        <input type="text" id="lead-doc" placeholder="Ex: 00.000.000/0001-00" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Empresa</label>
@@ -118,7 +128,7 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp / Celular *</label>
-                        <input type="text" id="lead-whats" required placeholder="Ex: 11999999999 (apenas números)" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                        <input type="text" id="lead-whats" required placeholder="Ex: (11) 99999-9999" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Valor / TPV Prometido (R$) *</label>
@@ -132,20 +142,20 @@
                         <label class="block font-semibold text-slate-700 mb-1">Status *</label>
                         <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                             <option value="Qualificação">Qualificação</option>
-                            <option value="Em Negociação">Em Negociação</option>
+                            <option value="Quente">Quente</option>
                             <option value="Conquista">Conquista</option>
                             <option value="Recusado">Recusado</option>
                         </select>
                     </div>
 
                     <!-- BLOCÃO DE AGENDAMENTO DE VISITA INTEGRADO -->
-                    <div class="md:col-span-1 border rounded-lg p-3 bg-slate-50">
+                    <div class="md:col-span-2 border rounded-lg p-3 bg-slate-50">
                         <label class="flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
                             <input type="checkbox" id="chk-agendar" class="rounded text-teal-600 focus:ring-teal-500">
-                            Agendar visita comercial?
+                            Agendar visita pós?
                         </label>
                         <div id="box-agendamento" class="hidden space-y-2 mt-2">
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600">Data da Visita</label>
                                     <input type="date" id="visita-data" class="w-full border rounded px-2 py-1 text-xs">
@@ -154,60 +164,40 @@
                                     <label class="block text-xs font-semibold text-slate-600">Hora</label>
                                     <input type="time" id="visita-hora" class="w-full border rounded px-2 py-1 text-xs">
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600">Endereço da Visita</label>
-                                <input type="text" id="visita-endereco" placeholder="Rua, número..." class="w-full border rounded px-2 py-1 text-xs">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BLOCÃO DE NEGOCIAÇÃO QUENTE INTEGRADO -->
-                    <div class="md:col-span-1 border rounded-lg p-3 bg-slate-50">
-                        <label class="flex items-center gap-2 font-semibold text-amber-800 cursor-pointer">
-                            <input type="checkbox" id="chk-agendar-quente" class="rounded text-amber-600 focus:ring-amber-500">
-                            Agendar Negociação Quente?
-                        </label>
-                        <div id="box-agendamento-quente" class="hidden space-y-2 mt-2">
-                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-600">Data Reunião</label>
-                                    <input type="date" id="quente-data" class="w-full border rounded px-2 py-1 text-xs">
+                                    <label class="block text-xs font-semibold text-slate-600">Endereço da Visita</label>
+                                    <input type="text" id="visita-endereco" placeholder="Rua, número..." class="w-full border rounded px-2 py-1 text-xs">
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600">Hora</label>
-                                    <input type="time" id="quente-hora" class="w-full border rounded px-2 py-1 text-xs">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600">Observações Fechamento</label>
-                                <input type="text" id="quente-obs" placeholder="Termos acordados, propostas..." class="w-full border rounded px-2 py-1 text-xs">
                             </div>
                         </div>
                     </div>
 
                     <div class="md:col-span-1 flex items-end">
-                        <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition shadow-sm h-fit">Salvar lead / Agendamentos</button>
+                        <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition shadow-sm h-fit">Salvar lead / Agendamento</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- BOTÕES DE SELEÇÃO DE SEÇÃO (MENU DE NAVEGAÇÃO COMPATÍVEL) -->
-        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-            <button id="nav-btn-vendas" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-slate-800 text-white"><i class="fa-solid fa-chart-line mr-2"></i>Controle de Vendas</button>
-            <button id="nav-btn-visitas" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-2"></i>Agenda de Visitas</button>
-            <button id="nav-btn-quentes" class="flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-amber-600 mr-2"></i>Agenda de Negociações Quentes</button>
+        <!-- BOTÕES DE SELEÇÃO DE SEÇÃO / ABAS ATUALIZADAS -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 mb-8 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+            <button id="nav-btn-aba-todos" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white"><i class="fa-solid fa-list text-slate-200 mr-1.5"></i>Todos</button>
+            <button id="nav-btn-vendas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-briefcase mr-1.5"></i>Carteira</button>
+            <button id="nav-btn-aba-qualificacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1.5"></i>Qualificação</button>
+            <button id="nav-btn-aba-quentes" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-orange-500 mr-1.5"></i>Quentes</button>
+            <button id="nav-btn-aba-recusados" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1.5"></i>Recusados</button>
+            <button id="nav-btn-visitas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-1.5"></i>Agenda Pós</button>
+            <button id="nav-btn-quentes-agenda" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-check text-amber-600 mr-1.5"></i>Agenda Quente</button>
         </div>
 
-        <!-- 1° SEÇÃO: CONTROLE DE VENDAS -->
+        <!-- SEÇÃO: LISTA PRINCIPAL (CARTEIRA, TODOS, QUALIFICAÇÃO, QUENTES, RECUSADOS) -->
         <div id="section-controle-vendas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-2">
-                    <h2 class="text-xl font-bold text-slate-800">Controle de vendas</h2>
-                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full"><span id="count-conquistas">0</span> conquistas</span>
+                    <h2 id="titulo-secao-vendas" class="text-xl font-bold text-slate-800">Todos os Leads</h2>
+                    <span id="badge-contador-vendas" class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full">0 leads</span>
                 </div>
-                <!-- FILTROS EXCLUSIVOS DA SEÇÃO CONTROLE DE VENDAS -->
+                <!-- FILTROS EXCLUSIVOS -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -227,30 +217,16 @@
                             <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                         </select>
                     </div>
-                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
                     <button id="btn-ordem-vendas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Recentes</button>
                     <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white px-3 py-1 rounded font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar</button>
                 </div>
             </div>
-
-            <!-- 4 BOTÕES DE FILTROS DE STATUS CORRIGIDOS -->
-            <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
-                <button id="btn-filtro-todos" class="px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition">Todos</button>
-                <button id="btn-filtro-conquistas" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-emerald-700 hover:bg-slate-50 transition"><i class="fa-solid fa-trophy"></i> Conquista</button>
-                <button id="btn-filtro-negociacoes" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-amber-700 hover:bg-slate-50 transition"><i class="fa-solid fa-comments"></i> Em Negociação</button>
-                <button id="btn-filtro-qualificacao" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-blue-700 hover:bg-slate-50 transition"><i class="fa-solid fa-magnifying-glass"></i> Qualificação</button>
-                <button id="btn-filtro-recusados" class="px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-rose-700 hover:bg-slate-50 transition"><i class="fa-solid fa-circle-xmark"></i> Recusados</button>
-            </div>
             
             <div class="tabela-container border rounded-lg">
-                <table class="w-full text-left border-collapse min-w-[600px]">
+                <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
-                        <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                            <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
-                            <th class="p-3">Valor / TPV</th>
-                            <th class="p-3">Data Cadastro</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3 text-center">Ações</th>
+                        <tr id="thead-linha-vendas" class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
+                            <!-- Gerado dinamicamente para alternar layout estilo agenda ou simples -->
                         </tr>
                     </thead>
                     <tbody id="tbody-leads" class="text-sm divide-y">
@@ -260,14 +236,13 @@
             </div>
         </div>
 
-        <!-- 2° SEÇÃO: AGENDA DE VISITAS -->
+        <!-- SEÇÃO: AGENDA PÓS -->
         <div id="section-agenda-visitas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-3">
-                    <h2 class="text-xl font-bold text-slate-800">Agenda de visitas</h2>
-                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Em negociação: R$ <span id="val-em-negociacao">0,00</span></span>
+                    <h2 class="text-xl font-bold text-slate-800">Agenda de Pós</h2>
+                    <span id="badge-tpv-visitas" class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">TPV: R$ 0,00</span>
                 </div>
-                <!-- FILTROS EXCLUSIVOS DA SEÇÃO AGENDA DE VISITAS -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -287,7 +262,6 @@
                             <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                         </select>
                     </div>
-                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
                     <button id="btn-ordem-visitas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Próximas</button>
                     <button id="btn-exportar-agenda" class="bg-teal-800 hover:bg-teal-900 text-white px-3 py-1.5 rounded-lg font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar</button>
                 </div>
@@ -310,14 +284,13 @@
             </div>
         </div>
 
-        <!-- 3° SEÇÃO: AGENDA DE NEGOCIAÇÕES QUENTES -->
+        <!-- SEÇÃO: AGENDA QUENTE -->
         <div id="section-negociacoes-quentes" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-3">
-                    <h2 class="text-xl font-bold text-amber-800"><i class="fa-solid fa-fire text-amber-600"></i> Negociações Quentes</h2>
-                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">Prestes a Fechar negócio</span>
+                    <h2 class="text-xl font-bold text-amber-800"><i class="fa-solid fa-fire text-amber-600"></i> Agenda Quente</h2>
+                    <span id="badge-tpv-quentes" class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">TPV: R$ 0,00</span>
                 </div>
-                <!-- FILTROS EXCLUSIVOS DA SEÇÃO NEGOCIAÇÕES QUENTES -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -337,7 +310,6 @@
                             <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                         </select>
                     </div>
-                    <!-- BOTÃO DE ORDENAÇÃO EXCLUSIVO -->
                     <button id="btn-ordem-quentes" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Próximas</button>
                 </div>
             </div>
@@ -350,7 +322,7 @@
                             <th class="p-3">Endereço Lead</th>
                             <th class="p-3">Contato / Celular</th>
                             <th class="p-3">TPV Prometido</th>
-                            <th class="p-3">Reunião / Obs</th>
+                            <th class="p-3">Visita Pós</th>
                             <th class="p-3 text-center">Ações</th>
                         </tr>
                     </thead>
@@ -416,12 +388,6 @@
                     <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
                     <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
                 </div>
-
-                <div id="modal-box-quente" class="bg-amber-50/50 p-3 rounded-lg border border-dashed border-amber-300 mt-2 hidden">
-                    <h4 class="font-bold text-xs text-amber-800 uppercase tracking-wider mb-2"><i class="fa-solid fa-fire text-amber-600"></i> Agendamento Negociação Quente</h4>
-                    <p class="text-xs text-slate-700"><strong>Reunião:</strong> <span id="modal-quente-datetime"></span></p>
-                    <p class="text-xs text-slate-700 mt-1"><strong>Observação Fechamento:</strong> <span id="modal-quente-obs"></span></p>
-                </div>
             </div>
             
             <button id="btn-modal-ok" class="w-full bg-slate-800 text-white font-bold py-2 rounded-xl mt-6 hover:bg-slate-700 transition">Fechar Ficha</button>
@@ -452,10 +418,9 @@
         let usuarioAtual = null;
         let listaLeads = [];
         let modoCadastro = 'login';
-        let filtroStatusAtual = 'Todos';
+        let secaoSelecionada = 'Todos';
         let tempoInatividade;
 
-        // Controle de ordenações por seção ('desc' = recente/próximo, 'asc' = antigo/distante)
         let ordemVendas = 'desc';
         let ordemVisitas = 'asc';
         let ordemQuentes = 'asc';
@@ -466,12 +431,39 @@
         
         const chkAgendar = document.getElementById('chk-agendar');
         const boxAgendamento = document.getElementById('box-agendamento');
-        const chkAgendarQuente = document.getElementById('chk-agendar-quente');
-        const boxAgendamentoQuente = document.getElementById('box-agendamento-quente');
+
+        // MÁSCARAS AUTOMÁTICAS CADASTRAIS (CPF/CNPJ e WhatsApp)
+        document.getElementById('lead-doc').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length <= 11) {
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            } else {
+                v = v.substring(0, 14);
+                v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+                v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+                v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+                v = v.replace(/(\d{4})(\d)/, "$1-$2");
+            }
+            e.target.value = v;
+        });
+
+        document.getElementById('lead-whats').addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            v = v.substring(0, 11);
+            if (v.length > 2) {
+                v = `(${v.substring(0, 2)}) ${v.substring(2)}`;
+            }
+            if (v.length > 9) {
+                v = `${v.substring(0, 10)}-${v.substring(10)}`;
+            }
+            e.target.value = v;
+        });
 
         // FORMATAÇÃO DE DINHEIRO
         function formatarMoeda(valor) {
-            return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            return parseFloat(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         // DIA DA SEMANA FORMATADO
@@ -500,10 +492,10 @@
         // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR
         function obterClasseStatus(status) {
             if (status === 'Qualificação') return 'status-qualificacao';
-            if (status === 'Em Negociação') return 'status-negociacao';
+            if (status === 'Em Negociação' || status === 'Quente') return 'status-quente';
             if (status === 'Conquista') return 'status-conquista';
             if (status === 'Recusado') return 'status-recusado';
-            return '';
+            return 'bg-slate-700 text-white font-semibold';
         }
 
         // CONDICIONAL DE INATIVIDADE (MAIS DE 10 MINUTOS)
@@ -529,34 +521,53 @@
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
         });
 
-        chkAgendarQuente.addEventListener('change', (e) => {
-            boxAgendamentoQuente.classList.toggle('hidden', !e.target.checked);
-        });
-
         // MANIPULAÇÃO DA ALTERNÂNCIA DE SEÇÕES COMPLETA POR BOTÕES
         const navVendas = document.getElementById('nav-btn-vendas');
+        const navTodos = document.getElementById('nav-btn-aba-todos');
+        const navQuali = document.getElementById('nav-btn-aba-qualificacao');
+        const navQuen = document.getElementById('nav-btn-aba-quentes');
+        const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
-        const navQuentes = document.getElementById('nav-btn-quentes');
+        const navQuentesAgenda = document.getElementById('nav-btn-quentes-agenda');
 
         const secVendas = document.getElementById('section-controle-vendas');
         const secVisitas = document.getElementById('section-agenda-visitas');
         const secQuentes = document.getElementById('section-negociacoes-quentes');
 
-        function alternarSecao(abaAtiva, secaoAtiva) {
-            [navVendas, navVisitas, navQuentes].forEach(b => {
-                b.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
+        function gerenciarAbas(abaAtiva, tipoFiltro, secaoVisivel) {
+            [navVendas, navTodos, navQuali, navQuen, navRecu, navVisitas, navQuentesAgenda].forEach(b => {
+                b.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
             });
             [secVendas, secVisitas, secQuentes].forEach(s => s.classList.add('hidden'));
             
-            secaoAtiva.classList.remove('hidden');
-            if(abaAtiva === navVendas) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-slate-800 text-white";
-            if(abaAtiva === navVisitas) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-teal-700 text-white";
-            if(abaAtiva === navQuentes) abaAtiva.className = "flex-1 px-4 py-3 rounded-lg font-bold text-center border transition shadow-sm bg-amber-600 text-white";
+            secaoVisivel.classList.remove('hidden');
+            secaoSelecionada = tipoFiltro;
+
+            if (tipoFiltro === 'Todos') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white";
+            } else if (tipoFiltro === 'Conquista') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-800 text-white";
+            } else if (tipoFiltro === 'Qualificação') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-blue-600 text-white";
+            } else if (tipoFiltro === 'Quente') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-orange-500 text-white";
+            } else if (tipoFiltro === 'Recusado') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-rose-600 text-white";
+            } else if (tipoFiltro === 'AgendaVisitas') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
+            } else if (tipoFiltro === 'AgendaQuentes') {
+                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-amber-600 text-white";
+            }
+            renderizarDashboard();
         }
 
-        navVendas.addEventListener('click', () => alternarSecao(navVendas, secVendas));
-        navVisitas.addEventListener('click', () => alternarSecao(navVisitas, secVisitas));
-        navQuentes.addEventListener('click', () => alternarSecao(navQuentes, secQuentes));
+        navTodos.addEventListener('click', () => gerenciarAbas(navTodos, 'Todos', secVendas));
+        navVendas.addEventListener('click', () => gerenciarAbas(navVendas, 'Conquista', secVendas));
+        navQuali.addEventListener('click', () => gerenciarAbas(navQuali, 'Qualificação', secVendas));
+        navQuen.addEventListener('click', () => gerenciarAbas(navQuen, 'Quente', secVendas));
+        navRecu.addEventListener('click', () => gerenciarAbas(navRecu, 'Recusado', secVendas));
+        navVisitas.addEventListener('click', () => gerenciarAbas(navVisitas, 'AgendaVisitas', secVisitas));
+        navQuentesAgenda.addEventListener('click', () => gerenciarAbas(navQuentesAgenda, 'AgendaQuentes', secQuentes));
 
         // ALTERNÂNCIA DE BOTÕES DE ORDENAÇÃO
         document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
@@ -644,87 +655,121 @@
             });
         }
 
-        // INTERFACE DO CLIQUE DOS BOTÕES DE FILTRO DE STATUS
-        function configurarFiltrosStatus() {
-            const botoes = {
-                'Todos': document.getElementById('btn-filtro-todos'),
-                'Conquista': document.getElementById('btn-filtro-conquistas'),
-                'Em Negociação': document.getElementById('btn-filtro-negociacoes'),
-                'Qualificação': document.getElementById('btn-filtro-qualificacao'),
-                'Recusado': document.getElementById('btn-filtro-recusados')
-            };
-
-            Object.keys(botoes).forEach(status => {
-                botoes[status].addEventListener('click', () => {
-                    filtroStatusAtual = status;
-                    Object.keys(botoes).forEach(s => {
-                        botoes[s].className = "px-3 py-1.5 rounded-lg border bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition";
-                    });
-                    if (status === 'Todos') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-slate-800 text-white transition";
-                    else if (status === 'Conquista') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-emerald-700 text-white transition";
-                    else if (status === 'Em Negociação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-amber-600 text-white transition";
-                    else if (status === 'Qualificação') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-blue-600 text-white transition";
-                    else if (status === 'Recusado') botoes[status].className = "px-3 py-1.5 rounded-lg border bg-rose-600 text-white transition";
-                    renderizarDashboard();
-                });
-            });
-        }
-        configurarFiltrosStatus();
-
         // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE COM FILTROS INDEPENDENTES
         function renderizarDashboard() {
             
-            // 1. FILTROS INDEPENDENTES - SEÇÃO CONTROLE DE VENDAS
+            // CONFIGURAÇÃO DINÂMICA DO TÍTULO E CABEÇALHO DA TABELA
+            const tituloSeccao = document.getElementById('titulo-secao-vendas');
+            const theadLinha = document.getElementById('thead-linha-vendas');
+
+            if (secaoSelecionada === 'Todos') tituloSeccao.textContent = 'Todos os Leads';
+            else if (secaoSelecionada === 'Conquista') tituloSeccao.textContent = 'Carteira';
+            else if (secaoSelecionada === 'Qualificação') tituloSeccao.textContent = 'Base de Qualificação';
+            else if (secaoSelecionada === 'Quente') tituloSeccao.textContent = 'Base de Negociações Quentes';
+            else if (secaoSelecionada === 'Recusado') tituloSeccao.textContent = 'Recusados';
+
+            // Adaptar cabeçalhos de tabela para incluir mais detalhes em Qualificação e Quentes (estilo agenda)
+            if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente') {
+                theadLinha.innerHTML = `
+                    <th class="p-3">Nome / CNPJ / CPF</th>
+                    <th class="p-3">Endereço Lead</th>
+                    <th class="p-3">Contato / Celular</th>
+                    <th class="p-3">TPV Prometido</th>
+                    <th class="p-3">Data / Status</th>
+                    <th class="p-3 text-center">Ações</th>
+                `;
+            } else {
+                theadLinha.innerHTML = `
+                    <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
+                    <th class="p-3">Valor / TPV</th>
+                    <th class="p-3">Data Cadastro</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-center">Ações</th>
+                `;
+            }
+
+            // 1. PROCESSAMENTO - SEÇÃO DE LEADS
             const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
             const fVendasDia = document.getElementById('filtro-vendas-dia').value;
             const fVendasMes = document.getElementById('filtro-vendas-mes').value;
 
             let leadsControleFiltrados = listaLeads.filter(l => {
-                if(filtroStatusAtual !== 'Todos' && l.status !== filtroStatusAtual) return false;
-                if(fVendasBusca && !l.nome.toLowerCase().includes(fVendasBusca)) return false;
+                if (secaoSelecionada === 'Conquista' && l.status !== 'Conquista') return false;
+                if (secaoSelecionada === 'Qualificação' && l.status !== 'Qualificação') return false;
+                if (secaoSelecionada === 'Quente' && (l.status !== 'Quente' && l.status !== 'Em Negociação')) return false;
+                if (secaoSelecionada === 'Recusado' && l.status !== 'Recusado') return false;
+
+                if (fVendasBusca && !(l.nome || '').toLowerCase().includes(fVendasBusca)) return false;
                 
-                if(l.dataCadastro) {
+                if (l.dataCadastro) {
                     const [ano, mes, dia] = l.dataCadastro.split('-');
-                    if(fVendasDia && parseInt(fVendasDia) !== parseInt(dia)) return false;
-                    if(fVendasMes !== 'Todos' && fVendasMes !== mes) return false;
+                    if (fVendasDia && parseInt(fVendasDia) !== parseInt(dia)) return false;
+                    if (fVendasMes !== 'Todos' && fVendasMes !== mes) return false;
                 } else if (fVendasDia || fVendasMes !== 'Todos') {
                     return false;
                 }
                 return true;
             });
 
-            // Aplicar ordenação por data cadastro na seção vendas
+            // Ordenação
             leadsControleFiltrados.sort((a, b) => {
                 const dataA = a.dataCadastro || '';
                 const dataB = b.dataCadastro || '';
                 return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
             });
 
-            // MÉRICAS GERAIS CALCULADAS EM CIMA DE TODOS OS LEADS DO USUÁRIO
-            let totalLeads = listaLeads.length;
-            let emNegociacao = 0;
-            let totalNegociacaoValor = 0;
-            let convertidos = 0;
-            let recusados = 0;
+            // CALCULAR MÉTRICAS GERAIS DOS CARDS COM TPV PROMETIDO
+            let cLeads = listaLeads.length, vLeads = 0;
+            let cQuali = 0, vQuali = 0;
+            let cQuen = 0, vQuen = 0;
+            let cConv = 0, vConv = 0;
+            let cRecu = 0, vRecu = 0;
 
             listaLeads.forEach(l => {
                 const val = parseFloat(l.valor) || 0;
-                if(l.status === 'Em Negociação') { emNegociacao++; totalNegociacaoValor += val; }
-                else if(l.status === 'Conquista') { convertidos++; }
-                else if(l.status === 'Recusado') { recusados++; }
+                vLeads += val;
+                if (l.status === 'Qualificação') { cQuali++; vQuali += val; }
+                else if (l.status === 'Quente' || l.status === 'Em Negociação') { cQuen++; vQuen += val; }
+                else if (l.status === 'Conquista') { cConv++; vConv += val; }
+                else if (l.status === 'Recusado') { cRecu++; vRecu += val; }
             });
 
-            const taxaConversao = totalLeads > 0 ? Math.round((convertidos / totalLeads) * 100) : 0;
+            const taxaConversao = cLeads > 0 ? Math.round((cConv / cLeads) * 100) : 0;
 
-            document.getElementById('metric-leads').textContent = totalLeads;
-            document.getElementById('metric-negociacao').textContent = emNegociacao;
-            document.getElementById('metric-convertidos').textContent = convertidos;
-            document.getElementById('metric-recusados').textContent = recusados;
+            document.getElementById('metric-leads').textContent = cLeads;
+            document.getElementById('metric-leads-val').textContent = formatarMoeda(vLeads);
+            document.getElementById('metric-qualificacao').textContent = cQuali;
+            document.getElementById('metric-qualificacao-val').textContent = formatarMoeda(vQuali);
+            document.getElementById('metric-quentes').textContent = cQuen;
+            document.getElementById('metric-quentes-val').textContent = formatarMoeda(vQuen);
+            document.getElementById('metric-convertidos').textContent = cConv;
+            document.getElementById('metric-convertidos-val').textContent = formatarMoeda(vConv);
+            document.getElementById('metric-recusados').textContent = cRecu;
+            document.getElementById('metric-recusados-val').textContent = formatarMoeda(vRecu);
             document.getElementById('metric-conversao').textContent = taxaConversao + '%';
-            document.getElementById('count-conquistas').textContent = convertidos;
-            document.getElementById('val-em-negociacao').textContent = totalNegociacaoValor.toLocaleString('pt-BR', {minimumFractionDigits: 2});
 
-            // Renderizar Tabela Principal de Controle de Vendas
+            // Atualização do texto descritivo dinâmico
+            const badgeContador = document.getElementById('badge-contador-vendas');
+            let totalTpvFiltrado = leadsControleFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor) || 0), 0);
+
+            if (secaoSelecionada === 'Todos') {
+                badgeContador.textContent = `${leadsControleFiltrados.length} leads - ${formatarMoeda(totalTpvFiltrado)}`;
+                badgeContador.className = "bg-slate-100 text-slate-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            } else if (secaoSelecionada === 'Conquista') {
+                badgeContador.textContent = `${cConv} conquistas - ${formatarMoeda(vConv)}`;
+                badgeContador.className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            } else if (secaoSelecionada === 'Qualificação') {
+                badgeContador.textContent = `${cQuali} leads - ${formatarMoeda(vQuali)}`;
+                badgeContador.className = "bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            } else if (secaoSelecionada === 'Quente') {
+                badgeContador.textContent = `${cQuen} leads - ${formatarMoeda(vQuen)}`;
+                badgeContador.className = "bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            } else if (secaoSelecionada === 'Recusado') {
+                badgeContador.textContent = `${cRecu} leads - ${formatarMoeda(vRecu)}`;
+                badgeContador.className = "bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            }
+
+            // Renderizar corpo da tabela principal
             const tbodyLeads = document.getElementById('tbody-leads');
             tbodyLeads.innerHTML = '';
 
@@ -734,35 +779,72 @@
                 const classeCorStatus = obterClasseStatus(l.status);
                 const urlWhats = criarLinkWhatsapp(l.whatsApp);
 
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
-                            <div class="font-bold text-slate-800 hover:brand-green hover:underline cursor-pointer flex items-center gap-1.5">
-                                <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
+                if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente') {
+                    // Layout expandido estilo Agenda para Qualificação e Quentes
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
+                                <div class="font-bold text-slate-800 hover:brand-green hover:underline cursor-pointer flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
+                                </div>
+                                <div class="text-xs text-slate-400">Doc: ${l.documento || 'Não informado'}</div>
+                            </button>
+                        </td>
+                        <td class="p-3 text-xs text-slate-600">${l.endereco || 'Não informado'}</td>
+                        <td class="p-3 text-xs">
+                            <div class="font-medium text-slate-800">${l.contatoNome || 'Nome não informado'}</div>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-slate-600 font-bold">${l.whatsApp || ''}</span>
+                                <a href="${urlWhats}" target="_blank" class="bg-emerald-600 text-white rounded px-1.5 py-0.5 font-bold text-[10px] hover:bg-emerald-700 transition"><i class="fa-brands fa-whatsapp"></i> Chat</a>
                             </div>
-                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
-                        </button>
-                    </td>
-                    <td class="p-3 font-semibold text-slate-700">${formatarMoeda(l.valor)}</td>
-                    <td class="p-3 text-slate-500">${formatarDataBR(l.dataCadastro)}</td>
-                    <td class="p-3">
-                        <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
-                            <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
-                            <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
-                            <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
-                            <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
-                        </select>
-                    </td>
-                    <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
-                        <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
-                        <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
+                        </td>
+                        <td class="p-3 font-bold text-slate-800">${formatarMoeda(l.valor)}</td>
+                        <td class="p-3 text-xs">
+                            <div class="text-slate-500 mb-1">${formatarDataBR(l.dataCadastro)}</div>
+                            <select data-id="${l.id}" class="select-status border rounded px-2 py-0.5 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
+                                <option value="Quente" class="bg-white text-slate-800" ${(l.status === 'Quente' || l.status === 'Em Negociação') ? 'selected' : ''}>Quente</option>
+                                <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
+                                <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
+                            </select>
+                        </td>
+                        <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                            <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                } else {
+                    // Layout Padrão para Todos, Carteira e Recusados
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
+                                <div class="font-bold text-slate-800 hover:brand-green hover:underline cursor-pointer flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user text-xs text-slate-400"></i> ${l.nome}
+                                </div>
+                                <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
+                            </button>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-700">${formatarMoeda(l.valor)}</td>
+                        <td class="p-3 text-slate-500">${formatarDataBR(l.dataCadastro)}</td>
+                        <td class="p-3">
+                            <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
+                                <option value="Quente" class="bg-white text-slate-800" ${(l.status === 'Quente' || l.status === 'Em Negociação') ? 'selected' : ''}>Quente</option>
+                                <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
+                                <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
+                            </select>
+                        </td>
+                        <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                            <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
+                            <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                }
                 tbodyLeads.appendChild(tr);
             });
 
-            // 2. FILTROS INDEPENDENTES - SEÇÃO AGENDA DE VISITAS
+            // 2. PROCESSAMENTO - SEÇÃO AGENDA DE PÓS
             const tbodyAgenda = document.getElementById('tbody-agenda');
             tbodyAgenda.innerHTML = '';
 
@@ -770,18 +852,22 @@
             const fVisitasDia = document.getElementById('filtro-visitas-dia').value;
             const fVisitasMes = document.getElementById('filtro-agenda-mes').value;
 
+            let totalTpvVisitas = 0;
+
             let leadsVisitasFiltrados = listaLeads.filter(l => {
                 if(!l.agendarVisita || !l.visitaData) return false;
-                if(fVisitasBusca && !l.nome.toLowerCase().includes(fVisitasBusca)) return false;
+                if(fVisitasBusca && !(l.nome || '').toLowerCase().includes(fVisitasBusca)) return false;
                 
                 const [ano, mes, dia] = l.visitaData.split('-');
                 if(fVisitasDia && parseInt(fVisitasDia) !== parseInt(dia)) return false;
                 if(fVisitasMes !== 'Todos' && mes !== fVisitasMes) return false;
                 
+                totalTpvVisitas += (parseFloat(l.valor) || 0);
                 return true;
             });
 
-            // Aplicar ordenação por data da visita
+            document.getElementById('badge-tpv-visitas').textContent = `TPV Total: ${formatarMoeda(totalTpvVisitas)}`;
+
             leadsVisitasFiltrados.sort((a, b) => {
                 const dataA = a.visitaData + 'T' + (a.visitaHora || '00:00');
                 const dataB = b.visitaData + 'T' + (b.visitaHora || '00:00');
@@ -806,14 +892,14 @@
                     <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
                         <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
                         <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Visita"><i class="fa-solid fa-calendar-xmark"></i></button>
+                        <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Agendamento"><i class="fa-solid fa-calendar-xmark"></i></button>
                         <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbodyAgenda.appendChild(tr);
             });
 
-            // 3. FILTROS INDEPENDENTES - SEÇÃO AGENDA DE NEGOCIAÇÕES QUENTES
+            // 3. PROCESSAMENTO - SEÇÃO AGENDA QUENTE
             const tbodyQuentes = document.getElementById('tbody-quentes');
             tbodyQuentes.innerHTML = '';
 
@@ -821,21 +907,27 @@
             const fQuentesDia = document.getElementById('filtro-quentes-dia').value;
             const fQuentesMes = document.getElementById('filtro-quentes-mes').value;
 
+            let totalTpvQuentes = 0;
+
             let leadsQuentesFiltrados = listaLeads.filter(l => {
-                if(!l.agendarQuente || !l.quenteData) return false;
-                if(fQuentesBusca && !l.nome.toLowerCase().includes(fQuentesBusca)) return false;
+                if(l.status !== 'Quente' && l.status !== 'Em Negociação') return false;
+                if(fQuentesBusca && !(l.nome || '').toLowerCase().includes(fQuentesBusca)) return false;
                 
-                const [ano, mes, dia] = l.quenteData.split('-');
-                if(fQuentesDia && parseInt(fQuentesDia) !== parseInt(dia)) return false;
-                if(fQuentesMes !== 'Todos' && mes !== fQuentesMes) return false;
+                if (l.dataCadastro) {
+                    const [ano, mes, dia] = l.dataCadastro.split('-');
+                    if(fQuentesDia && parseInt(fQuentesDia) !== parseInt(dia)) return false;
+                    if(fQuentesMes !== 'Todos' && mes !== fQuentesMes) return false;
+                }
                 
+                totalTpvQuentes += (parseFloat(l.valor) || 0);
                 return true;
             });
 
-            // Aplicar ordenação por data da reunião quente
+            document.getElementById('badge-tpv-quentes').textContent = `TPV Total: ${formatarMoeda(totalTpvQuentes)}`;
+
             leadsQuentesFiltrados.sort((a, b) => {
-                const dataA = a.quenteData + 'T' + (a.quenteHora || '00:00');
-                const dataB = b.quenteData + 'T' + (b.quenteHora || '00:00');
+                const dataA = a.dataCadastro || '';
+                const dataB = b.dataCadastro || '';
                 return ordemQuentes === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
             });
 
@@ -859,12 +951,11 @@
                     </td>
                     <td class="p-3 font-bold text-amber-700">${formatarMoeda(l.valor)}</td>
                     <td class="p-3 text-xs">
-                        <div class="font-bold text-slate-700"><i class="fa-solid fa-clock text-amber-500"></i> ${formatarDataBR(l.quenteData)} às ${l.quenteHora || '--:--'}</div>
-                        <div class="text-slate-500 italic truncate max-w-[180px]">${l.quenteObs || 'Sem observações'}</div>
+                        <div class="font-bold text-slate-700">${l.agendarVisita ? formatarDataBR(l.visitaData) : 'Sem Visita'}</div>
+                        <div class="text-slate-500 italic truncate max-w-[180px]">${l.visitaEndereco || ''}</div>
                     </td>
                     <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
                         <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-remover-quente text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover dos Quantes"><i class="fa-solid fa-fire-flip"></i></button>
                         <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
@@ -897,12 +988,6 @@
                 visitaHora: chkAgendar.checked ? document.getElementById('visita-hora').value : '',
                 visitaEndereco: chkAgendar.checked ? document.getElementById('visita-endereco').value : '',
                 
-                // Negociações Quentes
-                agendarQuente: chkAgendarQuente.checked,
-                quenteData: chkAgendarQuente.checked ? document.getElementById('quente-data').value : '',
-                quenteHora: chkAgendarQuente.checked ? document.getElementById('quente-hora').value : '',
-                quenteObs: chkAgendarQuente.checked ? document.getElementById('quente-obs').value : '',
-                
                 atualizadoEm: new Date().toISOString()
             };
 
@@ -917,8 +1002,6 @@
                 
                 chkAgendar.checked = false;
                 boxAgendamento.classList.add('hidden');
-                chkAgendarQuente.checked = false;
-                boxAgendamentoQuente.classList.add('hidden');
                 
                 definirDataHoje();
             } catch(err) {
@@ -942,7 +1025,6 @@
             document.getElementById('modal-valor').textContent = formatarMoeda(lead.valor);
             document.getElementById('modal-data').textContent = formatarDataBR(lead.dataCadastro);
             
-            // Link dinâmico do WhatsApp também na Ficha Modal do cliente
             const linkModalWhats = document.getElementById('modal-whats-link');
             if(lead.whatsApp) {
                 linkModalWhats.href = criarLinkWhatsapp(lead.whatsApp);
@@ -955,7 +1037,6 @@
             badgeStatus.textContent = lead.status;
             badgeStatus.className = "col-span-2 px-2 py-1 rounded text-xs font-bold w-fit " + obterClasseStatus(lead.status);
 
-            // Bloco Visita comum no Modal
             const boxVisita = document.getElementById('modal-box-visita');
             if (lead.agendarVisita && lead.visitaData) {
                 document.getElementById('modal-visita-datetime').textContent = `${formatarDataBR(lead.visitaData)} às ${lead.visitaHora || '--:--'}`;
@@ -963,16 +1044,6 @@
                 boxVisita.classList.remove('hidden');
             } else {
                 boxVisita.classList.add('hidden');
-            }
-
-            // Bloco Quente no Modal
-            const boxQuente = document.getElementById('modal-box-quente');
-            if(lead.agendarQuente && lead.quenteData) {
-                document.getElementById('modal-quente-datetime').textContent = `${formatarDataBR(lead.quenteData)} às ${lead.quenteHora || '--:--'}`;
-                document.getElementById('modal-quente-obs').textContent = lead.quenteObs || 'Sem observações';
-                boxQuente.classList.remove('hidden');
-            } else {
-                boxQuente.classList.add('hidden');
             }
 
             modalDetalhes.classList.remove('hidden');
@@ -1014,21 +1085,13 @@
                         document.getElementById('lead-whats').value = lead.whatsApp || '';
                         document.getElementById('lead-valor').value = lead.valor;
                         document.getElementById('lead-data').value = lead.dataCadastro;
-                        document.getElementById('lead-status').value = lead.status;
+                        document.getElementById('lead-status').value = lead.status === 'Em Negociação' ? 'Quente' : lead.status;
                         
-                        // Setar visita comum
                         chkAgendar.checked = lead.agendarVisita || false;
                         boxAgendamento.classList.toggle('hidden', !lead.agendarVisita);
                         document.getElementById('visita-data').value = lead.visitaData || '';
                         document.getElementById('visita-hora').value = lead.visitaHora || '';
                         document.getElementById('visita-endereco').value = lead.visitaEndereco || '';
-                        
-                        // Setar reunião quente
-                        chkAgendarQuente.checked = lead.agendarQuente || false;
-                        boxAgendamentoQuente.classList.toggle('hidden', !lead.agendarQuente);
-                        document.getElementById('quente-data').value = lead.quenteData || '';
-                        document.getElementById('quente-hora').value = lead.quenteHora || '';
-                        document.getElementById('quente-obs').value = lead.quenteObs || '';
 
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
@@ -1049,20 +1112,6 @@
                 });
             });
 
-            document.querySelectorAll('.btn-remover-quente').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const id = e.currentTarget.getAttribute('data-id');
-                    if(confirm("Deseja remover o agendamento de Negociação Quente deste cliente?")) {
-                        await updateDoc(doc(db, "leads", id), {
-                            agendarQuente: false,
-                            quenteData: '',
-                            quenteHora: '',
-                            quenteObs: ''
-                        });
-                    }
-                });
-            });
-
             document.querySelectorAll('.btn-excluir').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
@@ -1073,7 +1122,7 @@
             });
         }
 
-        // Ouvintes dos filtros independentes por seções para renderização instantânea
+        // Ouvintes dos filtros independentes
         document.getElementById('filtro-vendas-busca').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-dia').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-mes').addEventListener('change', renderizarDashboard);
