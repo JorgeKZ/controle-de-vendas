@@ -405,7 +405,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE & AUTOCOMPLETE CORRIGIDO COM MANUTENÇÃO DE NÚMERO -->
+    <!-- SCRIPT FIREBASE & AUTOCOMPLETE CORRIGIDO -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -461,14 +461,12 @@
         const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
 
-        // FUNÇÃO AUXILIAR: EXTRAI O NÚMERO DIGITADO PELO VENDEDOR NO CAMPO
         function extrairNumeroDigitado(texto) {
-            // Procura por sequências numéricas que pareçam número de endereço (ex: ", 123", " 123", " nº 123", " n 123")
             const match = texto.match(/(?:,|\s|nº|n°|n)?\s*(\d+)(?:\s*-[a-zA-Z0-9]+)?\b/i);
             return match ? match[1] : null;
         }
 
-        // AUTOCOMPLETE DE ENDEREÇO COM INTEGRAÇÃO INTELIGENTE DE NÚMERO
+        // AUTOCOMPLETE DE ENDEREÇO
         inputEndereco.addEventListener('input', (e) => {
             const textoDigitado = e.target.value.trim();
             clearTimeout(timerAutocomplete);
@@ -496,7 +494,6 @@
                             const addr = item.address || {};
                             const rua = addr.road || addr.pedestrian || addr.suburb || item.display_name.split(',')[0];
                             
-                            // Define o número: se a API trouxe o número exato usa ele; caso contrário, insere o número que o usuário digitou
                             let numFinal = addr.house_number || numeroDigitado || '';
                             const numExibicao = numFinal ? `, ${numFinal}` : '';
 
@@ -538,7 +535,7 @@
             }
         });
 
-        // CAPTURA DE GEOLOCALIZAÇÃO ALTA PRECISÃO (GPS)
+        // CAPTURA DE GEOLOCALIZAÇÃO ALTA PRECISÃO (GPS COM PERGUNTA DE NÚMERO)
         document.getElementById('btn-geolocalizacao').addEventListener('click', () => {
             if (!navigator.geolocation) {
                 alert("Geolocalização não é suportada pelo seu dispositivo.");
@@ -560,12 +557,23 @@
                     if (data && data.address) {
                         const addr = data.address;
                         const rua = addr.road || addr.pedestrian || addr.suburb || '';
-                        const numero = addr.house_number ? `, ${addr.house_number}` : ' (Nº aprox.)';
                         const bairro = addr.suburb || addr.neighbourhood ? ` - ${addr.suburb || addr.neighbourhood}` : '';
                         const cidade = addr.city || addr.town || addr.village || addr.municipality || '';
                         const uf = addr.state ? ` / ${addr.state}` : '';
 
-                        let enderecoFinal = `${rua}${numero}${bairro}${cidade ? ' - ' + cidade : ''}${uf}`;
+                        let numero = addr.house_number || '';
+
+                        // Se a base do GPS não soube dizer o número da porta exato, pergunta ao vendedor
+                        if (!numero) {
+                            const promptNumero = prompt(`GPS localizou: ${rua}\n\nDigite o número da fachada/porta:`, "");
+                            if (promptNumero && promptNumero.trim()) {
+                                numero = promptNumero.trim();
+                            }
+                        }
+
+                        const numExibicao = numero ? `, ${numero}` : '';
+                        let enderecoFinal = `${rua}${numExibicao}${bairro}${cidade ? ' - ' + cidade : ''}${uf}`;
+                        
                         if (!rua) enderecoFinal = data.display_name;
 
                         inputEndereco.value = enderecoFinal;
