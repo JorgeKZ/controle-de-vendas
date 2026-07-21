@@ -4,25 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRM DE CAMPO - Controle de Vendas e Visitas</title>
-    <!-- Tailwind CSS para estilização -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .brand-green { color: #0f766e; }
-        .brand-amber { color: #b45309; }
         .bg-brand-green { background-color: #0f766e; }
         .bg-brand-green:hover { background-color: #115e59; }
         
-        /* Cores dinâmicas para os selects de status */
         .status-qualificacao { background-color: #2563eb; color: #ffffff; font-weight: 600; }
         .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
         .status-quente { background-color: #f97316; color: #ffffff; font-weight: 600; }
         .status-conquista { background-color: #047857; color: #ffffff; font-weight: 600; }
         .status-recusado { background-color: #e11d48; color: #ffffff; font-weight: 600; }
 
-        /* Limitação de altura para as tabelas com cabeçalho fixo scrollable */
         .tabela-container { max-height: 500px; overflow-y: auto; overflow-x: auto; position: relative; }
         .tabela-container th { position: sticky; top: 0; z-index: 10; background-color: #f8fafc; box-shadow: inset 0 -1px 0 #e2e8f0; }
     </style>
@@ -48,7 +45,7 @@
         </div>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL COMPLETO -->
+    <!-- APLICATIVO PRINCIPAL -->
     <div id="app-container" class="max-w-7xl mx-auto hidden">
         
         <!-- HEADER -->
@@ -65,7 +62,7 @@
             </div>
         </header>
 
-        <!-- SEÇÃO SUPERIOR: FILTRO DE MÊS DOS CARDS + CARDS DE MÉTRICAS -->
+        <!-- CARDS DE MÉTRICAS -->
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                 <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500"><i class="fa-solid fa-chart-pie mr-1"></i> Resumo de Desempenho</h2>
@@ -162,19 +159,23 @@
                         <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     
-                    <!-- ENDEREÇO COM GEOLOCALIZAÇÃO E AUTOCOMPLETE EM TEMPO REAL -->
+                    <!-- ENDEREÇO COM AUTOCOMPLETE E MANUTENÇÃO DE NÚMERO -->
                     <div class="md:col-span-2 relative">
                         <div class="flex justify-between items-center mb-1">
                             <label class="block font-semibold text-slate-700">Endereço do Lead</label>
                             <button type="button" id="btn-geolocalizacao" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2 py-0.5 rounded border border-blue-200 transition flex items-center gap-1">
-                                <i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual
+                                <i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual (GPS)
                             </button>
                         </div>
-                        <input type="text" id="lead-endereco" autocomplete="off" placeholder="Digite a rua, avenida ou cidade... Ex: Av. Paulista" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                        <div class="relative">
+                            <input type="text" id="lead-endereco" autocomplete="off" placeholder="Digite a rua, número ou cidade... Ex: Rua Teste 123" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                            <div id="indicador-carregando" class="absolute right-3 top-2.5 hidden text-slate-400">
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                         
-                        <!-- DROPDOWN DE AUTOCOMPLETE DE ENDEREÇOS BRASILEIROS -->
-                        <ul id="lista-autocomplete-endereco" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-56 overflow-y-auto z-50 hidden text-xs divide-y divide-slate-100">
-                            <!-- Gerado dinamicamente -->
+                        <!-- DROPDOWN DE AUTOCOMPLETE -->
+                        <ul id="lista-autocomplete-endereco" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-2xl max-h-60 overflow-y-auto z-50 hidden text-xs divide-y divide-slate-100">
                         </ul>
                     </div>
 
@@ -205,7 +206,6 @@
                         </select>
                     </div>
 
-                    <!-- CAMPO CONDICIONAL: DATA DA CONQUISTA -->
                     <div id="box-data-conquista" class="hidden border border-emerald-300 bg-emerald-50/60 rounded-lg p-3">
                         <label class="block font-semibold text-emerald-800 text-xs mb-1"><i class="fa-solid fa-trophy mr-1"></i> Data Fechamento (Conquista) *</label>
                         <input type="date" id="lead-data-conquista" class="w-full border rounded px-2 py-1.5 text-xs bg-white">
@@ -242,14 +242,13 @@
             </div>
         </div>
 
-        <!-- SEÇÃO OCULTÁVEL 2: LISTA PRINCIPAL DE LEADS -->
+        <!-- SEÇÃO OCULTÁVEL 2: LISTA DE LEADS -->
         <div id="section-controle-vendas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-2">
                     <h2 id="titulo-secao-vendas" class="text-xl font-bold text-slate-800">Todos os Leads</h2>
                     <span id="badge-contador-vendas" class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full">0 leads</span>
                 </div>
-                <!-- FILTROS INDEPENDENTES -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -278,11 +277,9 @@
                 <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
                         <tr id="thead-linha-vendas" class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
-                            <!-- Gerado dinamicamente -->
                         </tr>
                     </thead>
                     <tbody id="tbody-leads" class="text-sm divide-y">
-                        <!-- Gerado dinamicamente -->
                     </tbody>
                 </table>
             </div>
@@ -330,7 +327,6 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-agenda" class="text-sm divide-y">
-                        <!-- Gerado dinamicamente -->
                     </tbody>
                 </table>
             </div>
@@ -409,13 +405,12 @@
         </div>
     </div>
 
-    <!-- SCRIPT DO FIREBASE, GEOLOCALIZAÇÃO E AUTOCOMPLETE -->
+    <!-- SCRIPT FIREBASE & AUTOCOMPLETE CORRIGIDO COM MANUTENÇÃO DE NÚMERO -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO REAL DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAQ2YjCv6HLZVJXisieJGbEwkAjCMj1GVE",
             authDomain: "controle-de-vendas-7b024.firebaseapp.com",
@@ -429,7 +424,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ESTADOS DA APLICAÇÃO
         let usuarioAtual = null;
         let listaLeads = [];
         let modoCadastro = 'login';
@@ -450,16 +444,14 @@
         const boxDataConquista = document.getElementById('box-data-conquista');
         const inputDataConquista = document.getElementById('lead-data-conquista');
 
-        // ELEMENTOS DE AUTOCOMPLETE DE ENDEREÇO
         const inputEndereco = document.getElementById('lead-endereco');
         const listaAutocomplete = document.getElementById('lista-autocomplete-endereco');
+        const loader = document.getElementById('indicador-carregando');
 
-        // SEÇÕES
         const secFormLead = document.getElementById('section-form-lead');
         const secVendas = document.getElementById('section-controle-vendas');
         const secVisitas = document.getElementById('section-agenda-visitas');
 
-        // BOTÕES DE NAVEGAÇÃO
         const navNovoLead = document.getElementById('nav-btn-novo-lead');
         const navTodos = document.getElementById('nav-btn-aba-todos');
         const navVendas = document.getElementById('nav-btn-vendas');
@@ -469,77 +461,92 @@
         const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
 
-        // LÓGICA DO AUTOCOMPLETE DE ENDEREÇO (TEMPO REAL NO BRASIL)
+        // FUNÇÃO AUXILIAR: EXTRAI O NÚMERO DIGITADO PELO VENDEDOR NO CAMPO
+        function extrairNumeroDigitado(texto) {
+            // Procura por sequências numéricas que pareçam número de endereço (ex: ", 123", " 123", " nº 123", " n 123")
+            const match = texto.match(/(?:,|\s|nº|n°|n)?\s*(\d+)(?:\s*-[a-zA-Z0-9]+)?\b/i);
+            return match ? match[1] : null;
+        }
+
+        // AUTOCOMPLETE DE ENDEREÇO COM INTEGRAÇÃO INTELIGENTE DE NÚMERO
         inputEndereco.addEventListener('input', (e) => {
-            const texto = e.target.value.trim();
+            const textoDigitado = e.target.value.trim();
             clearTimeout(timerAutocomplete);
 
-            if (texto.length < 3) {
+            if (textoDigitado.length < 3) {
                 listaAutocomplete.classList.add('hidden');
+                loader.classList.add('hidden');
                 return;
             }
 
-            // Debounce de 300ms
+            loader.classList.remove('hidden');
+
             timerAutocomplete = setTimeout(async () => {
                 try {
-                    // Busca rápida no serviço de geocoding com foco no Brasil (countrycodes=br)
-                    const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(texto)}&limit=5&lang=pt`);
+                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(textoDigitado)}&countrycodes=br&addressdetails=1&limit=6`;
+                    const response = await fetch(url);
                     const data = await response.json();
 
                     listaAutocomplete.innerHTML = '';
 
-                    if (data && data.features && data.features.length > 0) {
-                        data.features.forEach(f => {
-                            const p = f.properties;
-                            const rua = p.street || p.name || '';
-                            const numero = p.housenumber ? `, ${p.housenumber}` : '';
-                            const bairro = p.district || p.suburb ? ` - ${p.district || p.suburb}` : '';
-                            const cidade = p.city || p.town || p.state || '';
-                            
-                            const enderecoFormatado = `${rua}${numero}${bairro}${cidade ? ' - ' + cidade : ''}`;
+                    const numeroDigitado = extrairNumeroDigitado(textoDigitado);
 
-                            if (rua || cidade) {
-                                const li = document.createElement('li');
-                                li.className = "px-3 py-2 hover:bg-teal-50 cursor-pointer flex items-center gap-2 text-slate-700";
-                                li.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 text-xs"></i> <span>${enderecoFormatado}</span>`;
-                                
-                                li.addEventListener('click', () => {
-                                    inputEndereco.value = enderecoFormatado;
-                                    listaAutocomplete.classList.add('hidden');
-                                    if (chkAgendar.checked && !document.getElementById('visita-endereco').value) {
-                                        document.getElementById('visita-endereco').value = enderecoFormatado;
-                                    }
-                                });
-                                listaAutocomplete.appendChild(li);
-                            }
+                    if (data && data.length > 0) {
+                        data.forEach(item => {
+                            const addr = item.address || {};
+                            const rua = addr.road || addr.pedestrian || addr.suburb || item.display_name.split(',')[0];
+                            
+                            // Define o número: se a API trouxe o número exato usa ele; caso contrário, insere o número que o usuário digitou
+                            let numFinal = addr.house_number || numeroDigitado || '';
+                            const numExibicao = numFinal ? `, ${numFinal}` : '';
+
+                            const bairro = addr.suburb || addr.neighbourhood ? ` - ${addr.suburb || addr.neighbourhood}` : '';
+                            const cidade = addr.city || addr.town || addr.village || addr.municipality || '';
+                            const uf = addr.state ? ` / ${addr.state}` : '';
+
+                            let enderecoExibicao = `${rua}${numExibicao}${bairro}${cidade ? ' - ' + cidade : ''}${uf}`;
+
+                            const li = document.createElement('li');
+                            li.className = "px-3 py-2.5 hover:bg-teal-50 cursor-pointer flex items-center gap-2 text-slate-700 border-b last:border-0";
+                            li.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 text-xs shrink-0"></i> <span class="truncate">${enderecoExibicao}</span>`;
+                            
+                            li.addEventListener('click', () => {
+                                inputEndereco.value = enderecoExibicao;
+                                listaAutocomplete.classList.add('hidden');
+                                if (chkAgendar.checked && !document.getElementById('visita-endereco').value) {
+                                    document.getElementById('visita-endereco').value = enderecoExibicao;
+                                }
+                            });
+                            listaAutocomplete.appendChild(li);
                         });
                         listaAutocomplete.classList.remove('hidden');
                     } else {
                         listaAutocomplete.classList.add('hidden');
                     }
                 } catch (err) {
-                    console.error("Erro no autocomplete:", err);
+                    console.error("Erro na busca do autocomplete:", err);
                     listaAutocomplete.classList.add('hidden');
+                } finally {
+                    loader.classList.add('hidden');
                 }
-            }, 300);
+            }, 350);
         });
 
-        // Oculta autocomplete ao clicar fora
         document.addEventListener('click', (e) => {
             if (!inputEndereco.contains(e.target) && !listaAutocomplete.contains(e.target)) {
                 listaAutocomplete.classList.add('hidden');
             }
         });
 
-        // CAPTURA DE GEOLOCALIZAÇÃO VIA GPS DO CELULAR
+        // CAPTURA DE GEOLOCALIZAÇÃO ALTA PRECISÃO (GPS)
         document.getElementById('btn-geolocalizacao').addEventListener('click', () => {
             if (!navigator.geolocation) {
-                alert("Geolocalização não é suportada pelo seu navegador.");
+                alert("Geolocalização não é suportada pelo seu dispositivo.");
                 return;
             }
 
             const btnGeo = document.getElementById('btn-geolocalizacao');
-            btnGeo.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obtendo Posição...';
+            btnGeo.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obtendo Sinal GPS...';
             btnGeo.disabled = true;
 
             navigator.geolocation.getCurrentPosition(async (position) => {
@@ -547,21 +554,23 @@
                 const lon = position.coords.longitude;
 
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
                     const data = await response.json();
 
                     if (data && data.address) {
-                        const rua = data.address.road || data.address.pedestrian || '';
-                        const numero = data.address.house_number || '';
-                        const bairro = data.address.suburb || data.address.neighbourhood || '';
-                        const cidade = data.address.city || data.address.town || data.address.village || '';
-                        
-                        let enderecoFormatado = `${rua}${numero ? ', ' + numero : ''}${bairro ? ' - ' + bairro : ''}${cidade ? ' - ' + cidade : ''}`;
-                        if (!enderecoFormatado.trim()) enderecoFormatado = data.display_name;
+                        const addr = data.address;
+                        const rua = addr.road || addr.pedestrian || addr.suburb || '';
+                        const numero = addr.house_number ? `, ${addr.house_number}` : ' (Nº aprox.)';
+                        const bairro = addr.suburb || addr.neighbourhood ? ` - ${addr.suburb || addr.neighbourhood}` : '';
+                        const cidade = addr.city || addr.town || addr.village || addr.municipality || '';
+                        const uf = addr.state ? ` / ${addr.state}` : '';
 
-                        inputEndereco.value = enderecoFormatado;
+                        let enderecoFinal = `${rua}${numero}${bairro}${cidade ? ' - ' + cidade : ''}${uf}`;
+                        if (!rua) enderecoFinal = data.display_name;
+
+                        inputEndereco.value = enderecoFinal;
                         if (chkAgendar.checked && !document.getElementById('visita-endereco').value) {
-                            document.getElementById('visita-endereco').value = enderecoFormatado;
+                            document.getElementById('visita-endereco').value = enderecoFinal;
                         }
                     } else {
                         inputEndereco.value = `${lat}, ${lon}`;
@@ -569,17 +578,19 @@
                 } catch (err) {
                     inputEndereco.value = `${lat}, ${lon}`;
                 } finally {
-                    btnGeo.innerHTML = '<i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual';
+                    btnGeo.innerHTML = '<i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual (GPS)';
                     btnGeo.disabled = false;
                 }
             }, (error) => {
-                alert("Erro ao obter localização: " + error.message);
-                btnGeo.innerHTML = '<i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual';
+                let msg = "Erro ao obter localização.";
+                if (error.code === 1) msg = "Permissão de GPS negada no navegador/celular.";
+                else if (error.code === 2) msg = "Sinal de GPS indisponível.";
+                alert(msg);
+                btnGeo.innerHTML = '<i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual (GPS)';
                 btnGeo.disabled = false;
-            }, { enableHighAccuracy: true, timeout: 10000 });
+            }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
         });
 
-        // LINKS MAPS E WAZE
         function criarLinkGoogleMaps(enderecoStr) {
             if(!enderecoStr) return '#';
             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoStr)}`;
@@ -599,7 +610,6 @@
             }
         });
 
-        // MÁSCARAS AUTOMÁTICAS
         document.getElementById('lead-doc').addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, "");
             if (v.length <= 11) {
@@ -617,7 +627,6 @@
             e.target.value = v;
         });
 
-        // FUNÇÕES DE FORMATO
         function formatarMoeda(valor) {
             return parseFloat(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
@@ -651,7 +660,6 @@
             return 'bg-slate-700 text-white font-semibold';
         }
 
-        // TIMER INATIVIDADE
         function resetarTimerInatividade() {
             clearTimeout(tempoInatividade);
             if (usuarioAtual) {
@@ -671,7 +679,6 @@
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
         });
 
-        // NAVEGAÇÃO COMPLETA
         function alternarAba(tipoFiltro) {
             if (secaoSelecionada === tipoFiltro) {
                 secaoSelecionada = null;
@@ -728,7 +735,6 @@
         navRecu.addEventListener('click', () => alternarAba('Recusado'));
         navVisitas.addEventListener('click', () => alternarAba('AgendaVisitas'));
 
-        // ORDENAÇÕES
         document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
             ordemVendas = ordemVendas === 'desc' ? 'asc' : 'desc';
             e.currentTarget.innerHTML = ordemVendas === 'desc' ? '<i class="fa-solid fa-sort-down"></i> Mais Recentes' : '<i class="fa-solid fa-sort-up"></i> Mais Antigos';
@@ -741,7 +747,6 @@
             renderizarDashboard();
         });
 
-        // AUTH & LOGOUT
         document.getElementById('btn-alternar-auth').addEventListener('click', () => {
             const btnPrincipal = document.getElementById('btn-auth-principal');
             const linkAlternar = document.getElementById('btn-alternar-auth');
@@ -809,7 +814,6 @@
             });
         }
 
-        // PROCESSAMENTO E RENDERIZAÇÃO GERAL
         function renderizarDashboard() {
             const mesFiltroCards = document.getElementById('filtro-cards-mes').value;
 
@@ -1067,7 +1071,6 @@
                 tbodyLeads.appendChild(tr);
             });
 
-            // AGENDA DE VISITAS
             if (secaoSelecionada === 'AgendaVisitas') {
                 const tbodyAgenda = document.getElementById('tbody-agenda');
                 tbodyAgenda.innerHTML = '';
@@ -1143,7 +1146,6 @@
             atribuirEventosDinamicos();
         }
 
-        // SALVAR FORM
         formLead.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1201,7 +1203,6 @@
             }
         });
 
-        // MODAL DETALHES
         const modalDetalhes = document.getElementById('modal-detalhes');
         
         function abrirModalDetalhes(id) {
@@ -1359,7 +1360,6 @@
             });
         }
 
-        // LISTENERS
         document.getElementById('filtro-cards-mes').addEventListener('change', renderizarDashboard);
         document.getElementById('filtro-vendas-busca').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-dia').addEventListener('input', renderizarDashboard);
