@@ -65,7 +65,7 @@
             </div>
         </header>
 
-        <!-- PARTE SUPERIOR FIXA: CARDS DE MÉTRICAS (COM EM NEGOCIAÇÃO) -->
+        <!-- PARTE SUPERIOR FIXA: CARDS DE MÉTRICAS -->
         <div class="grid grid-cols-2 md:grid-cols-7 gap-2.5 mb-6 text-center">
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                 <span class="text-[11px] font-bold text-slate-400 uppercase">Leads Criados</span>
@@ -100,11 +100,11 @@
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
                 <span class="text-[11px] font-bold text-teal-700 uppercase">Conversão</span>
                 <div id="metric-conversao" class="text-xl font-extrabold text-teal-700 mt-0.5">0%</div>
-                <div class="text-[10px] text-teal-600 font-medium">Taxa Geral</div>
+                <div class="text-[10px] text-teal-600 font-medium">Fechamento</div>
             </div>
         </div>
 
-        <!-- BARRA DE NAVEGAÇÃO REORGANIZADA (QUENTES LOGO APÓS CARTEIRA) -->
+        <!-- BARRA DE NAVEGAÇÃO -->
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
             <button id="nav-btn-novo-lead" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90"><i class="fa-solid fa-plus-circle mr-1"></i>Novo Lead</button>
             <button id="nav-btn-aba-todos" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-list text-slate-500 mr-1"></i>Todos</button>
@@ -386,7 +386,7 @@
         let usuarioAtual = null;
         let listaLeads = [];
         let modoCadastro = 'login';
-        let secaoSelecionada = null; // Tela inicia limpa
+        let secaoSelecionada = null; 
         let tempoInatividade;
 
         let ordemVendas = 'desc';
@@ -498,7 +498,7 @@
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
         });
 
-        // NAVEGAÇÃO COMPLETA (TELA LIMPA / SANFONA)
+        // NAVEGAÇÃO COMPLETA
         function alternarAba(tipoFiltro) {
             if (secaoSelecionada === tipoFiltro) {
                 secaoSelecionada = null;
@@ -638,7 +638,7 @@
 
         // PROCESSAMENTO E RENDERIZAÇÃO GERAL
         function renderizarDashboard() {
-            // CALCULAR MÉTRICAS DOS CARDS SUPERIORES (SOMA SEPARADA DE QUENTES E EM NEGOCIAÇÃO)
+            // CALCULAR MÉTRICAS DOS CARDS SUPERIORES
             let cLeads = listaLeads.length, vLeads = 0;
             let cQuali = 0, vQuali = 0;
             let cQuen = 0, vQuen = 0;
@@ -656,7 +656,9 @@
                 else if (l.status === 'Recusado') { cRecu++; vRecu += val; }
             });
 
-            const taxaConversao = cLeads > 0 ? Math.round((cConv / cLeads) * 100) : 0;
+            // NOVO CÁLCULO DE CONVERSÃO DE FECHAMENTO (Win Rate): Conquistas / (Conquistas + Recusados)
+            const totalFinalizados = cConv + cRecu;
+            const taxaConversao = totalFinalizados > 0 ? Math.round((cConv / totalFinalizados) * 100) : 0;
 
             document.getElementById('metric-leads').textContent = cLeads;
             document.getElementById('metric-leads-val').textContent = formatarMoeda(vLeads);
@@ -714,7 +716,7 @@
                 `;
             }
 
-            // LÓGICA DE FILTRAGEM INTELIGENTE POR BASE
+            // LÓGICA DE FILTRAGEM INDEPENDENTE POR BASE
             const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
             const fVendasDia = document.getElementById('filtro-vendas-dia').value;
             const fVendasMes = document.getElementById('filtro-vendas-mes').value;
@@ -728,9 +730,6 @@
 
                 if (fVendasBusca && !(l.nome || '').toLowerCase().includes(fVendasBusca)) return false;
                 
-                // DEFINIÇÃO DO PARÂMETRO DA DATA DE FILTRO:
-                // Na Carteira -> Usa Data de Conquista.
-                // Em Qualificação / Quentes -> Se tiver visita agendada, usa a Data da Visita (para achar o agendamento em Agosto)!
                 let dataRef = l.dataCadastro;
                 if (secaoSelecionada === 'Conquista') {
                     dataRef = l.dataConquista || l.dataCadastro;
