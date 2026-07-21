@@ -162,15 +162,20 @@
                         <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     
-                    <!-- CAMPO DE ENDEREÇO COM BOTÃO DE GEOLOCALIZAÇÃO AUTOMÁTICA -->
-                    <div class="md:col-span-2">
+                    <!-- ENDEREÇO COM GEOLOCALIZAÇÃO E AUTOCOMPLETE EM TEMPO REAL -->
+                    <div class="md:col-span-2 relative">
                         <div class="flex justify-between items-center mb-1">
                             <label class="block font-semibold text-slate-700">Endereço do Lead</label>
                             <button type="button" id="btn-geolocalizacao" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2 py-0.5 rounded border border-blue-200 transition flex items-center gap-1">
                                 <i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual
                             </button>
                         </div>
-                        <input type="text" id="lead-endereco" placeholder="Ex: Av. Paulista, 1000 - São Paulo" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                        <input type="text" id="lead-endereco" autocomplete="off" placeholder="Digite a rua, avenida ou cidade... Ex: Av. Paulista" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                        
+                        <!-- DROPDOWN DE AUTOCOMPLETE DE ENDEREÇOS BRASILEIROS -->
+                        <ul id="lista-autocomplete-endereco" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-56 overflow-y-auto z-50 hidden text-xs divide-y divide-slate-100">
+                            <!-- Gerado dinamicamente -->
+                        </ul>
                     </div>
 
                     <div>
@@ -393,7 +398,6 @@
                     <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
                     <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
                     
-                    <!-- BOTÕES DE ROTA NO MODAL -->
                     <div class="flex gap-2 mt-3">
                         <a id="modal-btn-gmaps" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-2.5 py-1 rounded flex items-center gap-1 transition"><i class="fa-solid fa-location-arrow"></i> Google Maps</a>
                         <a id="modal-btn-waze" target="_blank" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-2.5 py-1 rounded flex items-center gap-1 transition"><i class="fa-brands fa-waze"></i> Waze</a>
@@ -405,7 +409,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT DO FIREBASE E GEOLOCALIZAÇÃO COMPLETO -->
+    <!-- SCRIPT DO FIREBASE, GEOLOCALIZAÇÃO E AUTOCOMPLETE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -431,6 +435,7 @@
         let modoCadastro = 'login';
         let secaoSelecionada = null; 
         let tempoInatividade;
+        let timerAutocomplete = null;
 
         let ordemVendas = 'desc';
         let ordemVisitas = 'asc';
@@ -444,6 +449,10 @@
         const selectStatusForm = document.getElementById('lead-status');
         const boxDataConquista = document.getElementById('box-data-conquista');
         const inputDataConquista = document.getElementById('lead-data-conquista');
+
+        // ELEMENTOS DE AUTOCOMPLETE DE ENDEREÇO
+        const inputEndereco = document.getElementById('lead-endereco');
+        const listaAutocomplete = document.getElementById('lista-autocomplete-endereco');
 
         // SEÇÕES
         const secFormLead = document.getElementById('section-form-lead');
@@ -460,7 +469,69 @@
         const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
 
-        // FUNÇÃO DE CAPTURA DE GEOLOCALIZAÇÃO AUTOMÁTICA
+        // LÓGICA DO AUTOCOMPLETE DE ENDEREÇO (TEMPO REAL NO BRASIL)
+        inputEndereco.addEventListener('input', (e) => {
+            const texto = e.target.value.trim();
+            clearTimeout(timerAutocomplete);
+
+            if (texto.length < 3) {
+                listaAutocomplete.classList.add('hidden');
+                return;
+            }
+
+            // Debounce de 300ms
+            timerAutocomplete = setTimeout(async () => {
+                try {
+                    // Busca rápida no serviço de geocoding com foco no Brasil (countrycodes=br)
+                    const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(texto)}&limit=5&lang=pt`);
+                    const data = await response.json();
+
+                    listaAutocomplete.innerHTML = '';
+
+                    if (data && data.features && data.features.length > 0) {
+                        data.features.forEach(f => {
+                            const p = f.properties;
+                            const rua = p.street || p.name || '';
+                            const numero = p.housenumber ? `, ${p.housenumber}` : '';
+                            const bairro = p.district || p.suburb ? ` - ${p.district || p.suburb}` : '';
+                            const cidade = p.city || p.town || p.state || '';
+                            
+                            const enderecoFormatado = `${rua}${numero}${bairro}${cidade ? ' - ' + cidade : ''}`;
+
+                            if (rua || cidade) {
+                                const li = document.createElement('li');
+                                li.className = "px-3 py-2 hover:bg-teal-50 cursor-pointer flex items-center gap-2 text-slate-700";
+                                li.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 text-xs"></i> <span>${enderecoFormatado}</span>`;
+                                
+                                li.addEventListener('click', () => {
+                                    inputEndereco.value = enderecoFormatado;
+                                    listaAutocomplete.classList.add('hidden');
+                                    if (chkAgendar.checked && !document.getElementById('visita-endereco').value) {
+                                        document.getElementById('visita-endereco').value = enderecoFormatado;
+                                    }
+                                });
+                                listaAutocomplete.appendChild(li);
+                            }
+                        });
+                        listaAutocomplete.classList.remove('hidden');
+                    } else {
+                        listaAutocomplete.classList.add('hidden');
+                    }
+                } catch (err) {
+                    console.error("Erro no autocomplete:", err);
+                    listaAutocomplete.classList.add('hidden');
+                }
+            }, 300);
+        });
+
+        // Oculta autocomplete ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!inputEndereco.contains(e.target) && !listaAutocomplete.contains(e.target)) {
+                listaAutocomplete.classList.add('hidden');
+            }
+        });
+
+        // CAPTURA DE GEOLOCALIZAÇÃO VIA GPS DO CELULAR
         document.getElementById('btn-geolocalizacao').addEventListener('click', () => {
             if (!navigator.geolocation) {
                 alert("Geolocalização não é suportada pelo seu navegador.");
@@ -476,7 +547,6 @@
                 const lon = position.coords.longitude;
 
                 try {
-                    // Consulta Reverse Geocoding via OpenStreetMap (Gratuito e sem chave)
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
                     const data = await response.json();
 
@@ -489,16 +559,15 @@
                         let enderecoFormatado = `${rua}${numero ? ', ' + numero : ''}${bairro ? ' - ' + bairro : ''}${cidade ? ' - ' + cidade : ''}`;
                         if (!enderecoFormatado.trim()) enderecoFormatado = data.display_name;
 
-                        document.getElementById('lead-endereco').value = enderecoFormatado;
-                        // Se o checkbox de visita estiver ativo, preenche lá também por conveniência
+                        inputEndereco.value = enderecoFormatado;
                         if (chkAgendar.checked && !document.getElementById('visita-endereco').value) {
                             document.getElementById('visita-endereco').value = enderecoFormatado;
                         }
                     } else {
-                        document.getElementById('lead-endereco').value = `${lat}, ${lon}`;
+                        inputEndereco.value = `${lat}, ${lon}`;
                     }
                 } catch (err) {
-                    document.getElementById('lead-endereco').value = `${lat}, ${lon}`;
+                    inputEndereco.value = `${lat}, ${lon}`;
                 } finally {
                     btnGeo.innerHTML = '<i class="fa-solid fa-location-crosshairs text-blue-600"></i> Usar Minha Localização Atual';
                     btnGeo.disabled = false;
@@ -510,7 +579,7 @@
             }, { enableHighAccuracy: true, timeout: 10000 });
         });
 
-        // LINK AUXILIAR MAPS E WAZE
+        // LINKS MAPS E WAZE
         function criarLinkGoogleMaps(enderecoStr) {
             if(!enderecoStr) return '#';
             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoStr)}`;
@@ -998,7 +1067,7 @@
                 tbodyLeads.appendChild(tr);
             });
 
-            // AGENDA DE VISITAS COM BOTÕES DE ROTA PARA MAPS E WAZE
+            // AGENDA DE VISITAS
             if (secaoSelecionada === 'AgendaVisitas') {
                 const tbodyAgenda = document.getElementById('tbody-agenda');
                 tbodyAgenda.innerHTML = '';
