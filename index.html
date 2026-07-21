@@ -29,7 +29,7 @@
 </head>
 <body class="p-4 md:p-8 text-slate-800">
 
-    <!-- TELA DE AUTENTICAÇÃO (SÓ APARECE SE DESLOGADO) -->
+    <!-- TELA DE AUTENTICAÇÃO -->
     <div id="auth-container" class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-md border border-slate-200 hidden">
         <h2 class="text-2xl font-bold mb-6 text-center text-slate-700">Acesso ao Sistema</h2>
         <form id="auth-form" class="space-y-4">
@@ -48,10 +48,10 @@
         </div>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL COMPLETO (SÓ APARECE LOGADO) -->
+    <!-- APLICATIVO PRINCIPAL COMPLETO -->
     <div id="app-container" class="max-w-7xl mx-auto hidden">
         
-        <!-- HEADER ORIGINAL COM USUÁRIO E LOGOUT -->
+        <!-- HEADER -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-6">
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-teal-700">CRM DE CAMPO</span>
@@ -65,8 +65,8 @@
             </div>
         </header>
 
-        <!-- INDICADORES / CARDS DE MÉTRICAS COM VALOR DE TPV -->
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 text-center">
+        <!-- PARTE SUPERIOR FIXA: CARDS DE MÉTRICAS -->
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6 text-center">
             <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                 <span class="text-xs font-bold text-slate-400 uppercase">Leads Criados</span>
                 <div id="metric-leads" class="text-xl font-extrabold text-slate-700 mt-0.5">0</div>
@@ -99,10 +99,22 @@
             </div>
         </div>
 
-        <!-- SEÇÃO CADASTRO (CRIAÇÃO DE NOVO LEAD E AGENDAMENTO) -->
-        <div class="grid grid-cols-1 gap-8 mb-6">
+        <!-- BARRA DE NAVEGAÇÃO INTERATIVA (TODOS OS BOTÕES DE AÇÃO E VISUALIZAÇÃO) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+            <button id="nav-btn-novo-lead" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90"><i class="fa-solid fa-plus-circle mr-1"></i>Novo Lead</button>
+            <button id="nav-btn-aba-todos" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-list text-slate-500 mr-1"></i>Todos</button>
+            <button id="nav-btn-vendas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-briefcase text-emerald-700 mr-1"></i>Carteira</button>
+            <button id="nav-btn-aba-qualificacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1"></i>Qualificação</button>
+            <button id="nav-btn-aba-quentes" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-orange-500 mr-1"></i>Quentes</button>
+            <button id="nav-btn-aba-negociacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-handshake text-amber-600 mr-1"></i>Em Negociação</button>
+            <button id="nav-btn-aba-recusados" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i>Recusado</button>
+            <button id="nav-btn-visitas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-1"></i>Agenda Visitas</button>
+        </div>
+
+        <!-- SEÇÃO OCULTÁVEL 1: FORMULÁRIO DE NOVO LEAD E AGENDAMENTO -->
+        <div id="section-form-lead" class="grid grid-cols-1 gap-8 mb-6 hidden">
             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Novo lead e agendamento</h2>
+                <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2"><i class="fa-solid fa-user-plus brand-green mr-2"></i>Novo lead e agendamento</h2>
                 <form id="form-lead" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <input type="hidden" id="lead-id">
                     
@@ -143,6 +155,7 @@
                         <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                             <option value="Qualificação">Qualificação</option>
                             <option value="Quente">Quente</option>
+                            <option value="Em Negociação">Em Negociação</option>
                             <option value="Conquista">Conquista</option>
                             <option value="Recusado">Recusado</option>
                         </select>
@@ -179,30 +192,20 @@
                     </div>
 
                     <div class="md:col-span-1 flex items-end">
-                        <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition shadow-sm h-fit">Salvar lead / Agendamento</button>
+                        <button type="submit" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold transition shadow-sm h-fit hover:bg-teal-800">Salvar lead / Agendamento</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- BOTÕES DE SELEÇÃO DE SEÇÃO / ABAS -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-8 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-            <button id="nav-btn-aba-todos" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white"><i class="fa-solid fa-list text-slate-200 mr-1.5"></i>Todos</button>
-            <button id="nav-btn-vendas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-briefcase mr-1.5"></i>Carteira</button>
-            <button id="nav-btn-aba-qualificacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1.5"></i>Qualificação</button>
-            <button id="nav-btn-aba-quentes" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-orange-500 mr-1.5"></i>Quentes</button>
-            <button id="nav-btn-aba-recusados" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1.5"></i>Recusados</button>
-            <button id="nav-btn-visitas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-1.5"></i>Agenda de Visitas</button>
-        </div>
-
-        <!-- SEÇÃO: LISTA PRINCIPAL -->
-        <div id="section-controle-vendas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
+        <!-- SEÇÃO OCULTÁVEL 2: LISTA PRINCIPAL DE LEADS -->
+        <div id="section-controle-vendas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-2">
                     <h2 id="titulo-secao-vendas" class="text-xl font-bold text-slate-800">Todos os Leads</h2>
                     <span id="badge-contador-vendas" class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full">0 leads</span>
                 </div>
-                <!-- FILTROS EXCLUSIVOS -->
+                <!-- FILTROS EXCLUSIVOS DE DIA E MÊS -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -241,7 +244,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: AGENDA DE VISITAS -->
+        <!-- SEÇÃO OCULTÁVEL 3: AGENDA DE VISITAS -->
         <div id="section-agenda-visitas" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12 hidden">
             <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 border-b pb-4">
                 <div class="flex items-center gap-3">
@@ -290,7 +293,7 @@
         </div>
     </div>
 
-    <!-- MODAL PARA EXIBIR TODOS OS DADOS INDIVIDUAIS DO CLIENTE -->
+    <!-- MODAL PARA EXIBIR FICHA COMPLETA DO CLIENTE -->
     <div id="modal-detalhes" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative">
             <button id="btn-fechar-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
@@ -378,7 +381,7 @@
         let usuarioAtual = null;
         let listaLeads = [];
         let modoCadastro = 'login';
-        let secaoSelecionada = 'Todos';
+        let secaoSelecionada = null; // Inicia sem nenhuma aba aberta (TELA LIMPA)
         let tempoInatividade;
 
         let ordemVendas = 'desc';
@@ -394,6 +397,21 @@
         const boxDataConquista = document.getElementById('box-data-conquista');
         const inputDataConquista = document.getElementById('lead-data-conquista');
 
+        // SEÇÕES DA INTERFACE
+        const secFormLead = document.getElementById('section-form-lead');
+        const secVendas = document.getElementById('section-controle-vendas');
+        const secVisitas = document.getElementById('section-agenda-visitas');
+
+        // BOTÕES DA NAVEGAÇÃO
+        const navNovoLead = document.getElementById('nav-btn-novo-lead');
+        const navTodos = document.getElementById('nav-btn-aba-todos');
+        const navVendas = document.getElementById('nav-btn-vendas');
+        const navQuali = document.getElementById('nav-btn-aba-qualificacao');
+        const navQuen = document.getElementById('nav-btn-aba-quentes');
+        const navNego = document.getElementById('nav-btn-aba-negociacao');
+        const navRecu = document.getElementById('nav-btn-aba-recusados');
+        const navVisitas = document.getElementById('nav-btn-visitas');
+
         // EXIBIR/OCULTAR CAMPO DE DATA DE CONQUISTA NO FORMULÁRIO
         selectStatusForm.addEventListener('change', (e) => {
             const ehConquista = e.target.value === 'Conquista';
@@ -404,7 +422,7 @@
             }
         });
 
-        // MÁSCARAS AUTOMÁTICAS CADASTRAIS (CPF/CNPJ e WhatsApp)
+        // MÁSCARAS AUTOMÁTICAS CADASTRAIS
         document.getElementById('lead-doc').addEventListener('input', (e) => {
             let v = e.target.value.replace(/\D/g, "");
             if (v.length <= 11) {
@@ -433,12 +451,11 @@
             e.target.value = v;
         });
 
-        // FORMATAÇÃO DE DINHEIRO
+        // FORMATAÇÕES AUXILIARES
         function formatarMoeda(valor) {
             return parseFloat(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // DIA DA SEMANA FORMATADO
         function obterDiaSemana(dataStr) {
             if(!dataStr) return '';
             const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
@@ -446,7 +463,6 @@
             return dias[data.getDay()];
         }
 
-        // DATA FORMATADA BR
         function formatarDataBR(dataStr) {
             if(!dataStr) return '';
             const partes = dataStr.split('-');
@@ -454,28 +470,27 @@
             return `${partes[2]}/${partes[1]}/${partes[0]}`;
         }
 
-        // RETORNA A URL DO WHATSAPP APENAS COM NÚMEROS
         function criarLinkWhatsapp(numeroStr) {
             if(!numeroStr) return '#';
             const limpo = numeroStr.replace(/\D/g, '');
             return `https://wa.me/${limpo}`;
         }
 
-        // RETORNA A CLASSE DE COR DO STATUS BASEADO NO VALOR
         function obterClasseStatus(status) {
             if (status === 'Qualificação') return 'status-qualificacao';
-            if (status === 'Em Negociação' || status === 'Quente') return 'status-quente';
+            if (status === 'Em Negociação') return 'status-negociacao';
+            if (status === 'Quente') return 'status-quente';
             if (status === 'Conquista') return 'status-conquista';
             if (status === 'Recusado') return 'status-recusado';
             return 'bg-slate-700 text-white font-semibold';
         }
 
-        // CONDICIONAL DE INATIVIDADE (MAIS DE 10 MINUTOS)
+        // TIMER DE INATIVIDADE
         function resetarTimerInatividade() {
             clearTimeout(tempoInatividade);
             if (usuarioAtual) {
                 tempoInatividade = setTimeout(() => {
-                    alert("Você foi deslogado por inatividade (mais de 10 minutos sem mexer no sistema).");
+                    alert("Você foi deslogado por inatividade.");
                     signOut(auth);
                 }, 600000);
             }
@@ -484,59 +499,72 @@
         window.onload = resetarTimerInatividade;
         document.onmousemove = resetarTimerInatividade;
         document.onkeydown = resetarTimerInatividade;
-        document.onmousedown = resetarTimerInatividade;
-        document.ontouchstart = resetarTimerInatividade;
         document.onclick = resetarTimerInatividade;
-        document.onscroll = resetarTimerInatividade;
 
         chkAgendar.addEventListener('change', (e) => {
             boxAgendamento.classList.toggle('hidden', !e.target.checked);
         });
 
-        // MANIPULAÇÃO DA ALTERNÂNCIA DE SEÇÕES
-        const navVendas = document.getElementById('nav-btn-vendas');
-        const navTodos = document.getElementById('nav-btn-aba-todos');
-        const navQuali = document.getElementById('nav-btn-aba-qualificacao');
-        const navQuen = document.getElementById('nav-btn-aba-quentes');
-        const navRecu = document.getElementById('nav-btn-aba-recusados');
-        const navVisitas = document.getElementById('nav-btn-visitas');
-
-        const secVendas = document.getElementById('section-controle-vendas');
-        const secVisitas = document.getElementById('section-agenda-visitas');
-
-        function gerenciarAbas(abaAtiva, tipoFiltro, secaoVisivel) {
-            [navVendas, navTodos, navQuali, navQuen, navRecu, navVisitas].forEach(b => {
-                b.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
-            });
-            [secVendas, secVisitas].forEach(s => s.classList.add('hidden'));
-            
-            secaoVisivel.classList.remove('hidden');
-            secaoSelecionada = tipoFiltro;
-
-            if (tipoFiltro === 'Todos') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white";
-            } else if (tipoFiltro === 'Conquista') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-800 text-white";
-            } else if (tipoFiltro === 'Qualificação') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-blue-600 text-white";
-            } else if (tipoFiltro === 'Quente') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-orange-500 text-white";
-            } else if (tipoFiltro === 'Recusado') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-rose-600 text-white";
-            } else if (tipoFiltro === 'AgendaVisitas') {
-                abaAtiva.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
+        // NAVEGAÇÃO / ALTERNÂNCIA DE TELAS (EXPANDE OU FECHA SE CLICAR DE NOVO)
+        function alternarAba(tipoFiltro) {
+            // Se clicar na mesma aba que já está aberta -> FECHA E LIMPA A TELA
+            if (secaoSelecionada === tipoFiltro) {
+                secaoSelecionada = null;
+                secFormLead.classList.add('hidden');
+                secVendas.classList.add('hidden');
+                secVisitas.classList.add('hidden');
+                resetarEstiloBotoesNav();
+                return;
             }
-            renderizarDashboard();
+
+            // Caso contrário, abre a aba selecionada e fecha as outras
+            secaoSelecionada = tipoFiltro;
+            secFormLead.classList.add('hidden');
+            secVendas.classList.add('hidden');
+            secVisitas.classList.add('hidden');
+
+            resetarEstiloBotoesNav();
+
+            if (tipoFiltro === 'NovoLead') {
+                secFormLead.classList.remove('hidden');
+                navNovoLead.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-900 text-white ring-2 ring-teal-500";
+            } else if (tipoFiltro === 'AgendaVisitas') {
+                secVisitas.classList.remove('hidden');
+                navVisitas.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
+                renderizarDashboard();
+            } else {
+                secVendas.classList.remove('hidden');
+                destacarBotaoAtivo(tipoFiltro);
+                renderizarDashboard();
+            }
         }
 
-        navTodos.addEventListener('click', () => gerenciarAbas(navTodos, 'Todos', secVendas));
-        navVendas.addEventListener('click', () => gerenciarAbas(navVendas, 'Conquista', secVendas));
-        navQuali.addEventListener('click', () => gerenciarAbas(navQuali, 'Qualificação', secVendas));
-        navQuen.addEventListener('click', () => gerenciarAbas(navQuen, 'Quente', secVendas));
-        navRecu.addEventListener('click', () => gerenciarAbas(navRecu, 'Recusado', secVendas));
-        navVisitas.addEventListener('click', () => gerenciarAbas(navVisitas, 'AgendaVisitas', secVisitas));
+        function resetarEstiloBotoesNav() {
+            navNovoLead.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90";
+            [navTodos, navVendas, navQuali, navQuen, navNego, navRecu, navVisitas].forEach(b => {
+                b.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
+            });
+        }
 
-        // ALTERNÂNCIA DE BOTÕES DE ORDENAÇÃO
+        function destacarBotaoAtivo(tipo) {
+            if (tipo === 'Todos') navTodos.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white";
+            else if (tipo === 'Conquista') navVendas.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-emerald-800 text-white";
+            else if (tipo === 'Qualificação') navQuali.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-blue-600 text-white";
+            else if (tipo === 'Quente') navQuen.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-orange-500 text-white";
+            else if (tipo === 'Em Negociação') navNego.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-amber-600 text-white";
+            else if (tipo === 'Recusado') navRecu.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-rose-600 text-white";
+        }
+
+        navNovoLead.addEventListener('click', () => alternarAba('NovoLead'));
+        navTodos.addEventListener('click', () => alternarAba('Todos'));
+        navVendas.addEventListener('click', () => alternarAba('Conquista'));
+        navQuali.addEventListener('click', () => alternarAba('Qualificação'));
+        navQuen.addEventListener('click', () => alternarAba('Quente'));
+        navNego.addEventListener('click', () => alternarAba('Em Negociação'));
+        navRecu.addEventListener('click', () => alternarAba('Recusado'));
+        navVisitas.addEventListener('click', () => alternarAba('AgendaVisitas'));
+
+        // BOTÕES DE ORDENAÇÃO
         document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
             ordemVendas = ordemVendas === 'desc' ? 'asc' : 'desc';
             e.currentTarget.innerHTML = ordemVendas === 'desc' ? '<i class="fa-solid fa-sort-down"></i> Mais Recentes' : '<i class="fa-solid fa-sort-up"></i> Mais Antigos';
@@ -549,6 +577,7 @@
             renderizarDashboard();
         });
 
+        // AUTENTICAÇÃO
         document.getElementById('btn-alternar-auth').addEventListener('click', () => {
             const btnPrincipal = document.getElementById('btn-auth-principal');
             const linkAlternar = document.getElementById('btn-alternar-auth');
@@ -616,82 +645,9 @@
             });
         }
 
-        // PROCESSAMENTO E RENDERIZAÇÃO DA INTERFACE
+        // RENDERIZAÇÃO DA DASHBOARD E PROCESSAMENTO DE DADOS
         function renderizarDashboard() {
-            
-            // CONFIGURAÇÃO DINÂMICA DO TÍTULO E CABEÇALHO DA TABELA
-            const tituloSeccao = document.getElementById('titulo-secao-vendas');
-            const theadLinha = document.getElementById('thead-linha-vendas');
-
-            if (secaoSelecionada === 'Todos') tituloSeccao.textContent = 'Todos os Leads';
-            else if (secaoSelecionada === 'Conquista') tituloSeccao.textContent = 'Carteira';
-            else if (secaoSelecionada === 'Qualificação') tituloSeccao.textContent = 'Base de Qualificação';
-            else if (secaoSelecionada === 'Quente') tituloSeccao.textContent = 'Base de Negociações Quentes';
-            else if (secaoSelecionada === 'Recusado') tituloSeccao.textContent = 'Recusados';
-
-            // Ajuste dos cabeçalhos das tabelas
-            if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente') {
-                // Sem a coluna da palavra "Visita"
-                theadLinha.innerHTML = `
-                    <th class="p-3">Nome / CNPJ / CPF</th>
-                    <th class="p-3">Endereço Lead</th>
-                    <th class="p-3">Contato / Celular</th>
-                    <th class="p-3">TPV Prometido</th>
-                    <th class="p-3">Data / Hora Visita</th>
-                    <th class="p-3 text-center">Ações</th>
-                `;
-            } else if (secaoSelecionada === 'Conquista') {
-                // Carteira exibe ambas as datas: Data Cadastro e Data Conquista
-                theadLinha.innerHTML = `
-                    <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
-                    <th class="p-3">Valor / TPV</th>
-                    <th class="p-3">Data Cadastro</th>
-                    <th class="p-3">Data Conquista</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3 text-center">Ações</th>
-                `;
-            } else {
-                theadLinha.innerHTML = `
-                    <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
-                    <th class="p-3">Valor / TPV</th>
-                    <th class="p-3">Data Cadastro</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3 text-center">Ações</th>
-                `;
-            }
-
-            // 1. PROCESSAMENTO - SEÇÃO DE LEADS
-            const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
-            const fVendasDia = document.getElementById('filtro-vendas-dia').value;
-            const fVendasMes = document.getElementById('filtro-vendas-mes').value;
-
-            let leadsControleFiltrados = listaLeads.filter(l => {
-                if (secaoSelecionada === 'Conquista' && l.status !== 'Conquista') return false;
-                if (secaoSelecionada === 'Qualificação' && l.status !== 'Qualificação') return false;
-                if (secaoSelecionada === 'Quente' && (l.status !== 'Quente' && l.status !== 'Em Negociação')) return false;
-                if (secaoSelecionada === 'Recusado' && l.status !== 'Recusado') return false;
-
-                if (fVendasBusca && !(l.nome || '').toLowerCase().includes(fVendasBusca)) return false;
-                
-                const dataRef = (secaoSelecionada === 'Conquista' && l.dataConquista) ? l.dataConquista : l.dataCadastro;
-                if (dataRef) {
-                    const [ano, mes, dia] = dataRef.split('-');
-                    if (fVendasDia && parseInt(fVendasDia) !== parseInt(dia)) return false;
-                    if (fVendasMes !== 'Todos' && fVendasMes !== mes) return false;
-                } else if (fVendasDia || fVendasMes !== 'Todos') {
-                    return false;
-                }
-                return true;
-            });
-
-            // Ordenação
-            leadsControleFiltrados.sort((a, b) => {
-                const dataA = (secaoSelecionada === 'Conquista' && a.dataConquista) ? a.dataConquista : (a.dataCadastro || '');
-                const dataB = (secaoSelecionada === 'Conquista' && b.dataConquista) ? b.dataConquista : (b.dataCadastro || '');
-                return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
-            });
-
-            // CALCULAR MÉTRICAS GERAIS DOS CARDS COM TPV PROMETIDO
+            // CALCULAR MÉTRICAS DOS CARDS SUPERIORES
             let cLeads = listaLeads.length, vLeads = 0;
             let cQuali = 0, vQuali = 0;
             let cQuen = 0, vQuen = 0;
@@ -721,39 +677,103 @@
             document.getElementById('metric-recusados-val').textContent = formatarMoeda(vRecu);
             document.getElementById('metric-conversao').textContent = taxaConversao + '%';
 
-            // Atualização do texto descritivo dinâmico
-            const badgeContador = document.getElementById('badge-contador-vendas');
-            let totalTpvFiltrado = leadsControleFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor) || 0), 0);
+            if (!secaoSelecionada || secaoSelecionada === 'NovoLead') return;
 
-            if (secaoSelecionada === 'Todos') {
-                badgeContador.textContent = `${leadsControleFiltrados.length} leads - ${formatarMoeda(totalTpvFiltrado)}`;
-                badgeContador.className = "bg-slate-100 text-slate-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            // CONFIGURAÇÃO DOS CABEÇALHOS DAS TABELAS
+            const tituloSeccao = document.getElementById('titulo-secao-vendas');
+            const theadLinha = document.getElementById('thead-linha-vendas');
+
+            if (secaoSelecionada === 'Todos') tituloSeccao.textContent = 'Todos os Leads';
+            else if (secaoSelecionada === 'Conquista') tituloSeccao.textContent = 'Carteira';
+            else if (secaoSelecionada === 'Qualificação') tituloSeccao.textContent = 'Base de Qualificação';
+            else if (secaoSelecionada === 'Quente') tituloSeccao.textContent = 'Base de Leads Quentes';
+            else if (secaoSelecionada === 'Em Negociação') tituloSeccao.textContent = 'Base Em Negociação';
+            else if (secaoSelecionada === 'Recusado') tituloSeccao.textContent = 'Recusados';
+
+            // REORGANIZAÇÃO: STATUS LOGO APÓS DATA/HORA VISITA NAS BASES QUALIFICAÇÃO, QUENTES E EM NEGOCIAÇÃO
+            if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
+                theadLinha.innerHTML = `
+                    <th class="p-3">Nome / CNPJ / CPF</th>
+                    <th class="p-3">Endereço Lead</th>
+                    <th class="p-3">Contato / Celular</th>
+                    <th class="p-3">TPV Prometido</th>
+                    <th class="p-3">Data / Hora Visita</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-center">Ações</th>
+                `;
             } else if (secaoSelecionada === 'Conquista') {
-                badgeContador.textContent = `${cConv} conquistas - ${formatarMoeda(vConv)}`;
-                badgeContador.className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
-            } else if (secaoSelecionada === 'Qualificação') {
-                badgeContador.textContent = `${cQuali} leads - ${formatarMoeda(vQuali)}`;
-                badgeContador.className = "bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
-            } else if (secaoSelecionada === 'Quente') {
-                badgeContador.textContent = `${cQuen} leads - ${formatarMoeda(vQuen)}`;
-                badgeContador.className = "bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
-            } else if (secaoSelecionada === 'Recusado') {
-                badgeContador.textContent = `${cRecu} leads - ${formatarMoeda(vRecu)}`;
-                badgeContador.className = "bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+                theadLinha.innerHTML = `
+                    <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
+                    <th class="p-3">Valor / TPV</th>
+                    <th class="p-3">Data Cadastro</th>
+                    <th class="p-3">Data Conquista</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-center">Ações</th>
+                `;
+            } else {
+                theadLinha.innerHTML = `
+                    <th class="p-3">Lead / Empresa (Clique para detalhes)</th>
+                    <th class="p-3">Valor / TPV</th>
+                    <th class="p-3">Data Cadastro</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-center">Ações</th>
+                `;
             }
 
-            // Renderizar corpo da tabela principal
+            // CORREÇÃO DOS FILTROS POR DIA E MÊS
+            const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
+            const fVendasDia = document.getElementById('filtro-vendas-dia').value;
+            const fVendasMes = document.getElementById('filtro-vendas-mes').value;
+
+            let leadsControleFiltrados = listaLeads.filter(l => {
+                if (secaoSelecionada === 'Conquista' && l.status !== 'Conquista') return false;
+                if (secaoSelecionada === 'Qualificação' && l.status !== 'Qualificação') return false;
+                if (secaoSelecionada === 'Quente' && l.status !== 'Quente') return false;
+                if (secaoSelecionada === 'Em Negociação' && l.status !== 'Em Negociação') return false;
+                if (secaoSelecionada === 'Recusado' && l.status !== 'Recusado') return false;
+
+                if (fVendasBusca && !(l.nome || '').toLowerCase().includes(fVendasBusca)) return false;
+                
+                // Extração precisa do ano, mês e dia da data de referência
+                const dataRef = (secaoSelecionada === 'Conquista' && l.dataConquista) ? l.dataConquista : l.dataCadastro;
+                if (dataRef) {
+                    const partes = dataRef.split('-');
+                    if (partes.length === 3) {
+                        const mesLead = partes[1];
+                        const diaLead = parseInt(partes[2], 10);
+                        
+                        if (fVendasDia && parseInt(fVendasDia, 10) !== diaLead) return false;
+                        if (fVendasMes !== 'Todos' && fVendasMes !== mesLead) return false;
+                    }
+                } else if (fVendasDia || fVendasMes !== 'Todos') {
+                    return false;
+                }
+                return true;
+            });
+
+            // Ordenação
+            leadsControleFiltrados.sort((a, b) => {
+                const dataA = (secaoSelecionada === 'Conquista' && a.dataConquista) ? a.dataConquista : (a.dataCadastro || '');
+                const dataB = (secaoSelecionada === 'Conquista' && b.dataConquista) ? b.dataConquista : (b.dataCadastro || '');
+                return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
+            });
+
+            // Atualização do contador da aba
+            const badgeContador = document.getElementById('badge-contador-vendas');
+            let totalTpvFiltrado = leadsControleFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor) || 0), 0);
+            badgeContador.textContent = `${leadsControleFiltrados.length} leads - ${formatarMoeda(totalTpvFiltrado)}`;
+
+            // RENDERIZAÇÃO DA TABELA DE LEADS
             const tbodyLeads = document.getElementById('tbody-leads');
             tbodyLeads.innerHTML = '';
 
             leadsControleFiltrados.forEach(l => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
-                const classeCorStatus = obterClasseStatus(l.status);
+                const classeCorStatus = obtainingStatusClass(l.status);
                 const urlWhats = criarLinkWhatsapp(l.whatsApp);
 
-                if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente') {
-                    // Estrutura das abas Quentes e Qualificação (Sem a coluna Visita)
+                if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
                     const temVisita = l.agendarVisita && l.visitaData;
                     tr.innerHTML = `
                         <td class="p-3">
@@ -776,13 +796,21 @@
                         <td class="p-3 text-xs">
                             ${temVisita ? `<div class="font-bold text-slate-700"><i class="fa-solid fa-calendar-check text-teal-600"></i> ${formatarDataBR(l.visitaData)}</div><div class="text-slate-400 text-[11px]">${l.visitaHora || '--:--'}</div>` : '<span class="text-slate-400">Sem visita agendada</span>'}
                         </td>
+                        <td class="p-3">
+                            <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
+                                <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
+                                <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
+                                <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
+                                <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
+                            </select>
+                        </td>
                         <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
                             <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     `;
                 } else if (secaoSelecionada === 'Conquista') {
-                    // Layout da CARTEIRA com Data Cadastro E Data Conquista
                     tr.innerHTML = `
                         <td class="p-3">
                             <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
@@ -798,7 +826,8 @@
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
                                 <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
-                                <option value="Quente" class="bg-white text-slate-800" ${(l.status === 'Quente' || l.status === 'Em Negociação') ? 'selected' : ''}>Quente</option>
+                                <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
+                                <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
                                 <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
                                 <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
                             </select>
@@ -810,7 +839,6 @@
                         </td>
                     `;
                 } else {
-                    // Layout Padrão para Todos e Recusados
                     tr.innerHTML = `
                         <td class="p-3">
                             <button class="btn-ver-detalhes text-left block focus:outline-none" data-id="${l.id}">
@@ -825,7 +853,8 @@
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
                                 <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
-                                <option value="Quente" class="bg-white text-slate-800" ${(l.status === 'Quente' || l.status === 'Em Negociação') ? 'selected' : ''}>Quente</option>
+                                <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
+                                <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
                                 <option value="Conquista" class="bg-white text-slate-800" ${l.status === 'Conquista' ? 'selected' : ''}>Conquista</option>
                                 <option value="Recusado" class="bg-white text-slate-800" ${l.status === 'Recusado' ? 'selected' : ''}>Recusado</option>
                             </select>
@@ -840,72 +869,83 @@
                 tbodyLeads.appendChild(tr);
             });
 
-            // 2. PROCESSAMENTO - SEÇÃO AGENDA DE VISITAS
-            const tbodyAgenda = document.getElementById('tbody-agenda');
-            tbodyAgenda.innerHTML = '';
+            // RENDERIZAÇÃO DA AGENDA DE VISITAS
+            if (secaoSelecionada === 'AgendaVisitas') {
+                const tbodyAgenda = document.getElementById('tbody-agenda');
+                tbodyAgenda.innerHTML = '';
 
-            const fVisitasBusca = document.getElementById('filtro-visitas-busca').value.toLowerCase();
-            const fVisitasDia = document.getElementById('filtro-visitas-dia').value;
-            const fVisitasMes = document.getElementById('filtro-agenda-mes').value;
+                const fVisitasBusca = document.getElementById('filtro-visitas-busca').value.toLowerCase();
+                const fVisitasDia = document.getElementById('filtro-visitas-dia').value;
+                const fVisitasMes = document.getElementById('filtro-agenda-mes').value;
 
-            let totalTpvVisitas = 0;
+                let totalTpvVisitas = 0;
 
-            let leadsVisitasFiltrados = listaLeads.filter(l => {
-                if(!l.agendarVisita || !l.visitaData) return false;
-                if(fVisitasBusca && !(l.nome || '').toLowerCase().includes(fVisitasBusca)) return false;
-                
-                const [ano, mes, dia] = l.visitaData.split('-');
-                if(fVisitasDia && parseInt(fVisitasDia) !== parseInt(dia)) return false;
-                if(fVisitasMes !== 'Todos' && mes !== fVisitasMes) return false;
-                
-                totalTpvVisitas += (parseFloat(l.valor) || 0);
-                return true;
-            });
+                let leadsVisitasFiltrados = listaLeads.filter(l => {
+                    if(!l.agendarVisita || !l.visitaData) return false;
+                    if(fVisitasBusca && !(l.nome || '').toLowerCase().includes(fVisitasBusca)) return false;
+                    
+                    const partes = l.visitaData.split('-');
+                    if (partes.length === 3) {
+                        const mesVisita = partes[1];
+                        const diaVisita = parseInt(partes[2], 10);
+                        
+                        if (fVisitasDia && parseInt(fVisitasDia, 10) !== diaVisita) return false;
+                        if (fVisitasMes !== 'Todos' && fVisitasMes !== mesVisita) return false;
+                    }
+                    
+                    totalTpvVisitas += (parseFloat(l.valor) || 0);
+                    return true;
+                });
 
-            document.getElementById('badge-tpv-visitas').textContent = `TPV Total: ${formatarMoeda(totalTpvVisitas)}`;
+                document.getElementById('badge-tpv-visitas').textContent = `TPV Total: ${formatarMoeda(totalTpvVisitas)}`;
 
-            leadsVisitasFiltrados.sort((a, b) => {
-                const dataA = a.visitaData + 'T' + (a.visitaHora || '00:00');
-                const dataB = b.visitaData + 'T' + (b.visitaHora || '00:00');
-                return ordemVisitas === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
-            });
+                leadsVisitasFiltrados.sort((a, b) => {
+                    const dataA = a.visitaData + 'T' + (a.visitaHora || '00:00');
+                    const dataB = b.visitaData + 'T' + (b.visitaHora || '00:00');
+                    return ordemVisitas === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
+                });
 
-            leadsVisitasFiltrados.forEach(l => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-                const urlWhats = criarLinkWhatsapp(l.whatsApp);
+                leadsVisitasFiltrados.forEach(l => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    const urlWhats = criarLinkWhatsapp(l.whatsApp);
 
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <div class="font-bold text-slate-800">${l.nome}</div>
-                        <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
-                    </td>
-                    <td class="p-3">
-                        <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
-                        <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
-                    </td>
-                    <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${l.visitaEndereco || 'Não informado'}</td>
-                    <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
-                        <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
-                        <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Agendamento"><i class="fa-solid fa-calendar-xmark"></i></button>
-                        <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbodyAgenda.appendChild(tr);
-            });
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <div class="font-bold text-slate-800">${l.nome}</div>
+                            <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
+                            <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
+                        </td>
+                        <td class="p-3 text-xs text-slate-500 max-w-xs truncate">${l.visitaEndereco || 'Não informado'}</td>
+                        <td class="p-3 text-center flex justify-center items-center gap-3 text-base">
+                            <a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-lg"></i></a>
+                            <button class="btn-editar text-teal-600 hover:text-teal-800" data-id="${l.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-remover-visita text-amber-600 hover:text-amber-800" data-id="${l.id}" title="Remover Agendamento"><i class="fa-solid fa-calendar-xmark"></i></button>
+                            <button class="btn-excluir text-rose-600 hover:text-rose-800" data-id="${l.id}"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbodyAgenda.appendChild(tr);
+                });
+            }
 
             atribuirEventosDinamicos();
         }
 
-        // INTERAÇÕES E ENVIO PARA O CLOUD FIRESTORE
+        // Função auxiliar de classe de cor
+        function obtainingStatusClass(status) {
+            return obterClasseStatus(status);
+        }
+
+        // SALVAR LEAD
         formLead.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const id = document.getElementById('lead-id').value;
             const statusSelecionado = selectStatusForm.value;
             
-            // Condicional de validação para Conquista
             let dataConquistaVal = '';
             if (statusSelecionado === 'Conquista') {
                 dataConquistaVal = inputDataConquista.value;
@@ -928,7 +968,6 @@
                 status: statusSelecionado,
                 dataConquista: dataConquistaVal,
                 
-                // Visitas
                 agendarVisita: chkAgendar.checked,
                 visitaData: chkAgendar.checked ? document.getElementById('visita-data').value : '',
                 visitaHora: chkAgendar.checked ? document.getElementById('visita-hora').value : '',
@@ -951,12 +990,16 @@
                 boxDataConquista.classList.add('hidden');
                 
                 definirDataHoje();
+                alert("Lead salvo com sucesso!");
+                
+                // Opcional: Oculta o formulário após salvar
+                alternarAba('NovoLead');
             } catch(err) {
                 alert("Erro ao salvar: " + err.message);
             }
         });
 
-        // MODAL DE DETALHES INDIVIDUAIS DO CLIENTE
+        // MODAL DETALHES
         const modalDetalhes = document.getElementById('modal-detalhes');
         
         function abrirModalDetalhes(id) {
@@ -1023,7 +1066,6 @@
                     
                     let updateData = { status: novoStatus };
 
-                    // Condicional ao mover direto pelo select para Conquista
                     if (novoStatus === 'Conquista') {
                         const hoje = new Date().toISOString().split('T')[0];
                         const dataInformada = prompt("Confirme a Data de Fechamento desta Conquista (AAAA-MM-DD):", lead?.dataConquista || hoje);
@@ -1045,6 +1087,11 @@
                     const id = e.currentTarget.getAttribute('data-id');
                     const lead = listaLeads.find(l => l.id === id);
                     if(lead) {
+                        // Abre o formulário para edição
+                        if (secaoSelecionada !== 'NovoLead') {
+                            alternarAba('NovoLead');
+                        }
+
                         document.getElementById('lead-id').value = lead.id;
                         document.getElementById('lead-nome').value = lead.nome;
                         document.getElementById('lead-doc').value = lead.documento || '';
@@ -1055,10 +1102,9 @@
                         document.getElementById('lead-valor').value = lead.valor;
                         document.getElementById('lead-data').value = lead.dataCadastro;
                         
-                        const statusReal = lead.status === 'Em Negociação' ? 'Quente' : lead.status;
-                        selectStatusForm.value = statusReal;
+                        selectStatusForm.value = lead.status;
                         
-                        const ehConquista = statusReal === 'Conquista';
+                        const ehConquista = lead.status === 'Conquista';
                         boxDataConquista.classList.toggle('hidden', !ehConquista);
                         inputDataConquista.required = ehConquista;
                         inputDataConquista.value = lead.dataConquista || new Date().toISOString().split('T')[0];
@@ -1091,14 +1137,14 @@
             document.querySelectorAll('.btn-excluir').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
-                    if(confirm("Tem certeza que deseja excluir permanentemente este lead e seus históricos?")) {
+                    if(confirm("Tem certeza que deseja excluir permanentemente este lead?")) {
                         await deleteDoc(doc(db, "leads", id));
                     }
                 });
             });
         }
 
-        // Ouvintes dos filtros independentes
+        // OUVINTES DOS FILTROS INDEPENDENTES
         document.getElementById('filtro-vendas-busca').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-dia').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-mes').addEventListener('change', renderizarDashboard);
