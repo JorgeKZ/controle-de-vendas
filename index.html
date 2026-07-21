@@ -65,42 +65,70 @@
             </div>
         </header>
 
-        <!-- PARTE SUPERIOR FIXA: CARDS DE MÉTRICAS -->
-        <div class="grid grid-cols-2 md:grid-cols-7 gap-2.5 mb-6 text-center">
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-slate-400 uppercase">Leads Criados</span>
-                <div id="metric-leads" class="text-xl font-extrabold text-slate-700 mt-0.5">0</div>
-                <div id="metric-leads-val" class="text-[10px] text-slate-400 font-medium">R$ 0,00</div>
+        <!-- SEÇÃO SUPERIOR: FILTRO DE MÊS DOS CARDS + CARDS DE MÉTRICAS -->
+        <div class="mb-6">
+            <!-- CABEÇALHO COM FILTRO DE MÊS DOS CARDS -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500"><i class="fa-solid fa-chart-pie mr-1"></i> Resumo de Desempenho</h2>
+                <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm text-xs font-semibold">
+                    <label for="filtro-cards-mes" class="text-slate-600 flex items-center gap-1">
+                        <i class="fa-solid fa-filter text-teal-700"></i> Filtrar Métricas:
+                    </label>
+                    <select id="filtro-cards-mes" class="bg-slate-50 border border-slate-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-600 font-bold text-slate-800">
+                        <option value="Todos">Todos os meses</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                    </select>
+                </div>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-blue-600 uppercase">Qualificação</span>
-                <div id="metric-qualificacao" class="text-xl font-extrabold text-blue-600 mt-0.5">0</div>
-                <div id="metric-qualificacao-val" class="text-[10px] text-blue-400 font-medium">R$ 0,00</div>
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-orange-600 uppercase">Quentes</span>
-                <div id="metric-quentes" class="text-xl font-extrabold text-orange-600 mt-0.5">0</div>
-                <div id="metric-quentes-val" class="text-[10px] text-orange-400 font-medium">R$ 0,00</div>
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-amber-600 uppercase">Negociação</span>
-                <div id="metric-negociacao" class="text-xl font-extrabold text-amber-600 mt-0.5">0</div>
-                <div id="metric-negociacao-val" class="text-[10px] text-amber-500 font-medium">R$ 0,00</div>
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-emerald-600 uppercase">Conquistas</span>
-                <div id="metric-convertidos" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
-                <div id="metric-convertidos-val" class="text-[10px] text-emerald-500 font-medium">R$ 0,00</div>
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[11px] font-bold text-rose-600 uppercase">Recusados</span>
-                <div id="metric-recusados" class="text-xl font-extrabold text-rose-600 mt-0.5">0</div>
-                <div id="metric-recusados-val" class="text-[10px] text-rose-400 font-medium">R$ 0,00</div>
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
-                <span class="text-[11px] font-bold text-teal-700 uppercase">Conversão</span>
-                <div id="metric-conversao" class="text-xl font-extrabold text-teal-700 mt-0.5">0%</div>
-                <div class="text-[10px] text-teal-600 font-medium">Fechamento</div>
+
+            <!-- CARDS SUPERIORES QUE SERÃO FILTRADOS PELO MÊS SELECIONADO -->
+            <div class="grid grid-cols-2 md:grid-cols-7 gap-2.5 text-center">
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase">Leads Criados</span>
+                    <div id="metric-leads" class="text-xl font-extrabold text-slate-700 mt-0.5">0</div>
+                    <div id="metric-leads-val" class="text-[10px] text-slate-400 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-blue-600 uppercase">Qualificação</span>
+                    <div id="metric-qualificacao" class="text-xl font-extrabold text-blue-600 mt-0.5">0</div>
+                    <div id="metric-qualificacao-val" class="text-[10px] text-blue-400 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-orange-600 uppercase">Quentes</span>
+                    <div id="metric-quentes" class="text-xl font-extrabold text-orange-600 mt-0.5">0</div>
+                    <div id="metric-quentes-val" class="text-[10px] text-orange-400 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-amber-600 uppercase">Negociação</span>
+                    <div id="metric-negociacao" class="text-xl font-extrabold text-amber-600 mt-0.5">0</div>
+                    <div id="metric-negociacao-val" class="text-[10px] text-amber-500 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-emerald-600 uppercase">Conquistas</span>
+                    <div id="metric-convertidos" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</div>
+                    <div id="metric-convertidos-val" class="text-[10px] text-emerald-500 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="text-[11px] font-bold text-rose-600 uppercase">Recusados</span>
+                    <div id="metric-recusados" class="text-xl font-extrabold text-rose-600 mt-0.5">0</div>
+                    <div id="metric-recusados-val" class="text-[10px] text-rose-400 font-medium">R$ 0,00</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm col-span-2 md:col-span-1">
+                    <span class="text-[11px] font-bold text-teal-700 uppercase">Conversão</span>
+                    <div id="metric-conversao" class="text-xl font-extrabold text-teal-700 mt-0.5">0%</div>
+                    <div class="text-[10px] text-teal-600 font-medium">Fechamento</div>
+                </div>
             </div>
         </div>
 
@@ -210,7 +238,7 @@
                     <h2 id="titulo-secao-vendas" class="text-xl font-bold text-slate-800">Todos os Leads</h2>
                     <span id="badge-contador-vendas" class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full">0 leads</span>
                 </div>
-                <!-- FILTROS INDEPENDENTES -->
+                <!-- FILTROS INDEPENDENTES DA TABELA -->
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400"></i>
@@ -638,8 +666,10 @@
 
         // PROCESSAMENTO E RENDERIZAÇÃO GERAL
         function renderizarDashboard() {
-            // CALCULAR MÉTRICAS DOS CARDS SUPERIORES
-            let cLeads = listaLeads.length, vLeads = 0;
+            // LER MÊS SELECIONADO PARA OS CARDS SUPERIORES
+            const mesFiltroCards = document.getElementById('filtro-cards-mes').value;
+
+            let cLeads = 0, vLeads = 0;
             let cQuali = 0, vQuali = 0;
             let cQuen = 0, vQuen = 0;
             let cNego = 0, vNego = 0;
@@ -648,18 +678,43 @@
 
             listaLeads.forEach(l => {
                 const val = parseFloat(l.valor) || 0;
-                vLeads += val;
-                if (l.status === 'Qualificação') { cQuali++; vQuali += val; }
-                else if (l.status === 'Quente') { cQuen++; vQuen += val; }
-                else if (l.status === 'Em Negociação') { cNego++; vNego += val; }
-                else if (l.status === 'Conquista') { cConv++; vConv += val; }
-                else if (l.status === 'Recusado') { cRecu++; vRecu += val; }
+
+                // Definir data de referência para o filtro de mês dos cards
+                let dataRefCard = l.dataCadastro;
+                if (l.status === 'Conquista') {
+                    dataRefCard = l.dataConquista || l.dataCadastro;
+                } else if (l.agendarVisita && l.visitaData) {
+                    dataRefCard = l.visitaData;
+                }
+
+                // Checar se o lead pertence ao mês selecionado nos cards
+                let passaNoFiltro = false;
+                if (mesFiltroCards === 'Todos') {
+                    passaNoFiltro = true;
+                } else if (dataRefCard) {
+                    const partes = dataRefCard.split('-');
+                    if (partes.length === 3 && partes[1] === mesFiltroCards) {
+                        passaNoFiltro = true;
+                    }
+                }
+
+                if (passaNoFiltro) {
+                    cLeads++;
+                    vLeads += val;
+
+                    if (l.status === 'Qualificação') { cQuali++; vQuali += val; }
+                    else if (l.status === 'Quente') { cQuen++; vQuen += val; }
+                    else if (l.status === 'Em Negociação') { cNego++; vNego += val; }
+                    else if (l.status === 'Conquista') { cConv++; vConv += val; }
+                    else if (l.status === 'Recusado') { cRecu++; vRecu += val; }
+                }
             });
 
-            // NOVO CÁLCULO DE CONVERSÃO DE FECHAMENTO (Win Rate): Conquistas / (Conquistas + Recusados)
+            // CÁLCULO DE CONVERSÃO DE FECHAMENTO
             const totalFinalizados = cConv + cRecu;
             const taxaConversao = totalFinalizados > 0 ? Math.round((cConv / totalFinalizados) * 100) : 0;
 
+            // ATUALIZAÇÃO DOS CARDS
             document.getElementById('metric-leads').textContent = cLeads;
             document.getElementById('metric-leads-val').textContent = formatarMoeda(vLeads);
             document.getElementById('metric-qualificacao').textContent = cQuali;
@@ -716,7 +771,7 @@
                 `;
             }
 
-            // LÓGICA DE FILTRAGEM INDEPENDENTE POR BASE
+            // LÓGICA DE FILTRAGEM INDEPENDENTE POR BASE NA TABELA
             const fVendasBusca = document.getElementById('filtro-vendas-busca').value.toLowerCase();
             const fVendasDia = document.getElementById('filtro-vendas-dia').value;
             const fVendasMes = document.getElementById('filtro-vendas-mes').value;
@@ -1141,7 +1196,10 @@
             });
         }
 
-        // LISTENERS FILTROS
+        // OUVINTE DO NOVO FILTRO DE MÊS DOS CARDS SUPERIORES
+        document.getElementById('filtro-cards-mes').addEventListener('change', renderizarDashboard);
+
+        // LISTENERS FILTROS DAS TABELAS
         document.getElementById('filtro-vendas-busca').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-dia').addEventListener('input', renderizarDashboard);
         document.getElementById('filtro-vendas-mes').addEventListener('change', renderizarDashboard);
