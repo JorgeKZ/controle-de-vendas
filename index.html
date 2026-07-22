@@ -159,7 +159,7 @@
                         <input type="text" id="lead-empresa" placeholder="Ex: Tech Inova Ltda" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
                     </div>
                     
-                    <!-- ENDEREÇO COM AUTOCOMPLETE E MANUTENÇÃO DE NÚMERO -->
+                    <!-- ENDEREÇO -->
                     <div class="md:col-span-2 relative">
                         <div class="flex justify-between items-center mb-1">
                             <label class="block font-semibold text-slate-700">Endereço do Lead</label>
@@ -174,7 +174,6 @@
                             </div>
                         </div>
                         
-                        <!-- DROPDOWN DE AUTOCOMPLETE -->
                         <ul id="lista-autocomplete-endereco" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-2xl max-h-60 overflow-y-auto z-50 hidden text-xs divide-y divide-slate-100">
                         </ul>
                     </div>
@@ -333,6 +332,36 @@
         </div>
     </div>
 
+    <!-- MODAL REAGENDAMENTO RÁPIDO DE VISITA -->
+    <div id="modal-reagendar" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative">
+            <button id="btn-fechar-modal-reagendar" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-900 mb-1 border-b pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-teal-700"></i> Reagendar Visita
+            </h3>
+            <p id="reagendar-nome-lead" class="text-xs text-slate-500 font-semibold mb-4 mt-2 bg-slate-100 p-2 rounded"></p>
+            
+            <form id="form-reagendamento-rapido" class="space-y-4 text-sm">
+                <input type="hidden" id="reagendar-id-lead">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1 text-xs">Nova Data da Visita *</label>
+                    <input type="date" id="reagendar-nova-data" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1 text-xs">Novo Horário *</label>
+                    <input type="time" id="reagendar-novo-horario" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="btn-cancelar-reagendar" class="w-1/2 bg-slate-200 text-slate-700 font-bold py-2 rounded-lg hover:bg-slate-300 transition text-xs">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-brand-green text-white font-bold py-2 rounded-lg hover:bg-teal-800 transition text-xs">Salvar Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL DETALHES -->
     <div id="modal-detalhes" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative">
@@ -405,7 +434,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIREBASE & AUTOCOMPLETE CORRIGIDO -->
+    <!-- SCRIPT FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -460,6 +489,9 @@
         const navNego = document.getElementById('nav-btn-aba-negociacao');
         const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
+
+        const modalReagendar = document.getElementById('modal-reagendar');
+        const formReagendarRapido = document.getElementById('form-reagendamento-rapido');
 
         function extrairNumeroDigitado(texto) {
             const match = texto.match(/(?:,|\s|nº|n°|n)?\s*(\d+)(?:\s*-[a-zA-Z0-9]+)?\b/i);
@@ -535,7 +567,7 @@
             }
         });
 
-        // CAPTURA DE GEOLOCALIZAÇÃO ALTA PRECISÃO (GPS COM PERGUNTA DE NÚMERO)
+        // CAPTURA DE GEOLOCALIZAÇÃO ALTA PRECISÃO (GPS)
         document.getElementById('btn-geolocalizacao').addEventListener('click', () => {
             if (!navigator.geolocation) {
                 alert("Geolocalização não é suportada pelo seu dispositivo.");
@@ -563,7 +595,6 @@
 
                         let numero = addr.house_number || '';
 
-                        // Se a base do GPS não soube dizer o número da porta exato, pergunta ao vendedor
                         if (!numero) {
                             const promptNumero = prompt(`GPS localizou: ${rua}\n\nDigite o número da fachada/porta:`, "");
                             if (promptNumero && promptNumero.trim()) {
@@ -822,6 +853,42 @@
             });
         }
 
+        function abrirModalReagendarRapido(id) {
+            const lead = listaLeads.find(l => l.id === id);
+            if(!lead) return;
+
+            document.getElementById('reagendar-id-lead').value = lead.id;
+            document.getElementById('reagendar-nome-lead').textContent = `Lead: ${lead.nome}`;
+            
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('reagendar-nova-data').value = lead.visitaData || hoje;
+            document.getElementById('reagendar-novo-horario').value = lead.visitaHora || '09:00';
+
+            modalReagendar.classList.remove('hidden');
+        }
+
+        document.getElementById('btn-fechar-modal-reagendar').addEventListener('click', () => modalReagendar.classList.add('hidden'));
+        document.getElementById('btn-cancelar-reagendar').addEventListener('click', () => modalReagendar.classList.add('hidden'));
+
+        formReagendarRapido.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('reagendar-id-lead').value;
+            const novaData = document.getElementById('reagendar-nova-data').value;
+            const novoHorario = document.getElementById('reagendar-novo-horario').value;
+
+            try {
+                await updateDoc(doc(db, "leads", id), {
+                    agendarVisita: true,
+                    visitaData: novaData,
+                    visitaHora: novoHorario,
+                    atualizadoEm: new Date().toISOString()
+                });
+                modalReagendar.classList.add('hidden');
+            } catch(err) {
+                alert("Erro ao reagendar: " + err.message);
+            }
+        });
+
         function renderizarDashboard() {
             const mesFiltroCards = document.getElementById('filtro-cards-mes').value;
 
@@ -958,12 +1025,17 @@
             });
 
             leadsControleFiltrados.sort((a, b) => {
-                let dataA = a.dataCadastro || '';
-                let dataB = b.dataCadastro || '';
+                let dataA = a.dataCadastro || '1970-01-01';
+                let dataB = b.dataCadastro || '1970-01-01';
+
                 if (secaoSelecionada === 'Conquista') {
-                    dataA = a.dataConquista || a.dataCadastro || '';
-                    dataB = b.dataConquista || b.dataCadastro || '';
+                    dataA = a.dataConquista || a.dataCadastro || '1970-01-01';
+                    dataB = b.dataConquista || b.dataCadastro || '1970-01-01';
+                } else if ((secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') && (a.visitaData || b.visitaData)) {
+                    dataA = a.visitaData ? `${a.visitaData}T${a.visitaHora || '00:00'}` : a.dataCadastro || '1970-01-01';
+                    dataB = b.visitaData ? `${b.visitaData}T${b.visitaHora || '00:00'}` : b.dataCadastro || '1970-01-01';
                 }
+
                 return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
             });
 
@@ -996,15 +1068,24 @@
                             ${l.endereco ? `<div class="flex items-center gap-1.5"><span>${l.endereco}</span><a href="${urlMaps}" target="_blank" class="text-blue-600 hover:text-blue-800" title="Abrir no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a></div>` : 'Não informado'}
                         </td>
                         <td class="p-3 text-xs">
-                            <div class="font-medium text-slate-800">${l.contatoNome || 'Nome não informado'}</div>
-                            <div class="flex items-center gap-2 mt-0.5">
+                            <div class="font-medium text-slate-800">${l.contatoNome || 'Não informado'}</div>
+                            <div class="flex items-center gap-1.5 mt-0.5">
                                 <span class="text-slate-600 font-bold">${l.whatsApp || ''}</span>
-                                <a href="${urlWhats}" target="_blank" class="bg-emerald-600 text-white rounded px-1.5 py-0.5 font-bold text-[10px] hover:bg-emerald-700 transition"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                                ${l.whatsApp ? `<a href="${urlWhats}" target="_blank" class="text-emerald-600 hover:text-emerald-800 text-sm" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>` : ''}
                             </div>
                         </td>
                         <td class="p-3 font-bold text-slate-800">${formatarMoeda(l.valor)}</td>
                         <td class="p-3 text-xs">
-                            ${temVisita ? `<div class="font-bold text-slate-700"><i class="fa-solid fa-calendar-check text-teal-600"></i> ${formatarDataBR(l.visitaData)}</div><div class="text-slate-400 text-[11px]">${l.visitaHora || '--:--'}</div>` : '<span class="text-slate-400">Sem visita agendada</span>'}
+                            ${temVisita ? `
+                                <button class="btn-reagendar-rapido text-left group bg-teal-50 hover:bg-teal-100 p-1.5 rounded-lg border border-teal-200 transition" data-id="${l.id}" title="Clique para reagendar data/hora">
+                                    <div class="font-bold text-teal-800 flex items-center gap-1 group-hover:underline"><i class="fa-solid fa-calendar-pen text-teal-600"></i> ${formatarDataBR(l.visitaData)}</div>
+                                    <div class="text-teal-600 text-[11px] font-semibold">${l.visitaHora || '--:--'} <span class="text-[10px] bg-teal-200 text-teal-800 px-1 rounded ml-1">Reagendar</span></div>
+                                </button>
+                            ` : `
+                                <button class="btn-reagendar-rapido text-slate-400 hover:text-teal-700 hover:bg-slate-100 p-1 rounded transition border border-dashed text-xs" data-id="${l.id}">
+                                    <i class="fa-solid fa-plus-circle"></i> Add Visita
+                                </button>
+                            `}
                         </td>
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
@@ -1109,8 +1190,8 @@
                 document.getElementById('badge-tpv-visitas').textContent = `TPV Total: ${formatarMoeda(totalTpvVisitas)}`;
 
                 leadsVisitasFiltrados.sort((a, b) => {
-                    const dataA = a.visitaData + 'T' + (a.visitaHora || '00:00');
-                    const dataB = b.visitaData + 'T' + (b.visitaHora || '00:00');
+                    const dataA = (a.visitaData || '1970-01-01') + 'T' + (a.visitaHora || '00:00');
+                    const dataB = (b.visitaData || '1970-01-01') + 'T' + (b.visitaHora || '00:00');
                     return ordemVisitas === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
                 });
 
@@ -1128,8 +1209,10 @@
                             <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
                         </td>
                         <td class="p-3">
-                            <div class="font-medium text-slate-700 flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-teal-600"></span> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
-                            <div class="text-xs text-slate-400">${obterDiaSemana(l.visitaData)}</div>
+                            <button class="btn-reagendar-rapido text-left group bg-teal-50 hover:bg-teal-100 p-1.5 rounded-lg border border-teal-200 transition" data-id="${l.id}" title="Clique para reagendar data/hora">
+                                <div class="font-bold text-teal-800 flex items-center gap-1 group-hover:underline"><i class="fa-solid fa-calendar-pen text-teal-600"></i> ${formatarDataBR(l.visitaData)} &middot; ${l.visitaHora || '--:--'}</div>
+                                <div class="text-xs text-slate-400 mt-0.5">${obterDiaSemana(l.visitaData)} <span class="text-[10px] bg-teal-200 text-teal-800 px-1 rounded ml-1 font-semibold">Alterar</span></div>
+                            </button>
                         </td>
                         <td class="p-3 text-xs text-slate-500 max-w-xs truncate">
                             <div>${l.visitaEndereco || 'Não informado'}</div>
@@ -1280,6 +1363,13 @@
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
                     abrirModalDetalhes(id);
+                });
+            });
+
+            document.querySelectorAll('.btn-reagendar-rapido').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    abrirModalReagendarRapido(id);
                 });
             });
 
