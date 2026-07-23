@@ -217,7 +217,14 @@
                             Agendar visita?
                         </label>
                         <div id="box-agendamento" class="hidden space-y-2 mt-2">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600">Tipo de Visita *</label>
+                                    <select id="visita-tipo" class="w-full border rounded px-2 py-1 text-xs bg-white">
+                                        <option value="Venda">Venda</option>
+                                        <option value="PÓS">PÓS Venda</option>
+                                    </select>
+                                </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600">Data da Visita</label>
                                     <input type="date" id="visita-data" class="w-full border rounded px-2 py-1 text-xs">
@@ -320,6 +327,7 @@
                     <thead>
                         <tr class="border-b text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
                             <th class="p-3">Lead / Empresa</th>
+                            <th class="p-3">Ação</th>
                             <th class="p-3">Data / Hora Visita</th>
                             <th class="p-3">Endereço Visita</th>
                             <th class="p-3 text-center">Ações</th>
@@ -345,6 +353,13 @@
             
             <form id="form-reagendamento-rapido" class="space-y-4 text-sm">
                 <input type="hidden" id="reagendar-id-lead">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1 text-xs">Tipo de Visita *</label>
+                    <select id="reagendar-novo-tipo" class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none text-xs font-semibold">
+                        <option value="Venda">Venda</option>
+                        <option value="PÓS">PÓS Venda</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1 text-xs">Nova Data da Visita *</label>
                     <input type="date" id="reagendar-nova-data" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
@@ -420,7 +435,8 @@
                 
                 <div id="modal-box-visita" class="bg-slate-50 p-3 rounded-lg border border-dashed mt-2 hidden">
                     <h4 class="font-bold text-xs text-slate-600 uppercase tracking-wider mb-2"><i class="fa-solid fa-calendar-days text-teal-700"></i> Detalhes da Visita Agendada</h4>
-                    <p class="text-xs text-slate-700"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
+                    <p class="text-xs text-slate-700"><strong>Tipo:</strong> <span id="modal-visita-tipo" class="font-bold"></span></p>
+                    <p class="text-xs text-slate-700 mt-1"><strong>Data/Hora:</strong> <span id="modal-visita-datetime"></span></p>
                     <p class="text-xs text-slate-700 mt-1"><strong>Local da Visita:</strong> <span id="modal-visita-local"></span></p>
                     
                     <div class="flex gap-2 mt-3">
@@ -774,14 +790,12 @@
         navRecu.addEventListener('click', () => alternarAba('Recusado'));
         navVisitas.addEventListener('click', () => alternarAba('AgendaVisitas'));
 
-        // PADRONIZAÇÃO DO TEXTO DO BOTÃO DE ORDENAÇÃO DE LEADS
         document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
             ordemVendas = ordemVendas === 'asc' ? 'desc' : 'asc';
             e.currentTarget.innerHTML = ordemVendas === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
             renderizarDashboard();
         });
 
-        // PADRONIZAÇÃO DO TEXTO DO BOTÃO DE ORDENAÇÃO DE VISITAS
         document.getElementById('btn-ordem-visitas').addEventListener('click', (e) => {
             ordemVisitas = ordemVisitas === 'asc' ? 'desc' : 'asc';
             e.currentTarget.innerHTML = ordemVisitas === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
@@ -863,6 +877,7 @@
             document.getElementById('reagendar-nome-lead').textContent = `Lead: ${lead.nome}`;
             
             const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('reagendar-novo-tipo').value = lead.visitaTipo || 'Venda';
             document.getElementById('reagendar-nova-data').value = lead.visitaData || hoje;
             document.getElementById('reagendar-novo-horario').value = lead.visitaHora || '09:00';
 
@@ -875,12 +890,14 @@
         formReagendarRapido.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('reagendar-id-lead').value;
+            const novoTipo = document.getElementById('reagendar-novo-tipo').value;
             const novaData = document.getElementById('reagendar-nova-data').value;
             const novoHorario = document.getElementById('reagendar-novo-horario').value;
 
             try {
                 await updateDoc(doc(db, "leads", id), {
                     agendarVisita: true,
+                    visitaTipo: novoTipo,
                     visitaData: novaData,
                     visitaHora: novoHorario,
                     atualizadoEm: new Date().toISOString()
@@ -1081,7 +1098,7 @@
                             ${temVisita ? `
                                 <button class="btn-reagendar-rapido text-left group bg-teal-50 hover:bg-teal-100 p-1.5 rounded-lg border border-teal-200 transition" data-id="${l.id}" title="Clique para reagendar data/hora">
                                     <div class="font-bold text-teal-800 flex items-center gap-1 group-hover:underline"><i class="fa-solid fa-calendar-pen text-teal-600"></i> ${formatarDataBR(l.visitaData)}</div>
-                                    <div class="text-teal-600 text-[11px] font-semibold">${l.visitaHora || '--:--'} <span class="text-[10px] bg-teal-200 text-teal-800 px-1 rounded ml-1">Reagendar</span></div>
+                                    <div class="text-teal-600 text-[11px] font-semibold">${l.visitaHora || '--:--'} <span class="text-[10px] bg-teal-200 text-teal-800 px-1 rounded ml-1 font-bold">${l.visitaTipo || 'Venda'}</span></div>
                                 </button>
                             ` : `
                                 <button class="btn-reagendar-rapido text-slate-400 hover:text-teal-700 hover:bg-slate-100 p-1 rounded transition border border-dashed text-xs" data-id="${l.id}">
@@ -1173,7 +1190,8 @@
                 let totalTpvVisitas = 0;
 
                 let leadsVisitasFiltrados = listaLeads.filter(l => {
-                    if(!l.agendarVisita || !l.visitaData) return false;
+                    // EXCLUI DA AGENDA SE NÃO TIVER VISITA AGENDADA OU SE ESTIVER COMO CONCLUÍDO
+                    if(!l.agendarVisita || !l.visitaData || l.visitaTipo === 'Concluído') return false;
                     if(fVisitasBusca && !(l.nome || '').toLowerCase().includes(fVisitasBusca)) return false;
                     
                     const partes = l.visitaData.split('-');
@@ -1205,10 +1223,19 @@
                     const urlGmaps = criarLinkGoogleMaps(enderecoDestino);
                     const urlWaze = criarLinkWaze(enderecoDestino);
 
+                    const tipoAtual = l.visitaTipo || 'Venda';
+
                     tr.innerHTML = `
                         <td class="p-3">
                             <div class="font-bold text-slate-800">${l.nome}</div>
                             <div class="text-xs text-slate-400">${l.empresa || 'Sem empresa'}</div>
+                        </td>
+                        <td class="p-3">
+                            <select data-id="${l.id}" class="select-acao-visita border rounded px-2 py-1 text-xs font-bold focus:outline-none bg-slate-50 text-slate-700">
+                                <option value="Venda" ${tipoAtual === 'Venda' ? 'selected' : ''}>Venda</option>
+                                <option value="PÓS" ${tipoAtual === 'PÓS' ? 'selected' : ''}>PÓS</option>
+                                <option value="Concluído" class="text-emerald-600 font-bold">Concluído</option>
+                            </select>
                         </td>
                         <td class="p-3">
                             <button class="btn-reagendar-rapido text-left group bg-teal-50 hover:bg-teal-100 p-1.5 rounded-lg border border-teal-200 transition" data-id="${l.id}" title="Clique para reagendar data/hora">
@@ -1268,6 +1295,7 @@
                 dataConquista: dataConquistaVal,
                 
                 agendarVisita: chkAgendar.checked,
+                visitaTipo: chkAgendar.checked ? document.getElementById('visita-tipo').value : 'Venda',
                 visitaData: chkAgendar.checked ? document.getElementById('visita-data').value : '',
                 visitaHora: chkAgendar.checked ? document.getElementById('visita-hora').value : '',
                 visitaEndereco: chkAgendar.checked ? document.getElementById('visita-endereco').value : '',
@@ -1343,6 +1371,7 @@
             const boxVisita = document.getElementById('modal-box-visita');
             if (lead.agendarVisita && lead.visitaData) {
                 const endVisita = lead.visitaEndereco || lead.endereco;
+                document.getElementById('modal-visita-tipo').textContent = lead.visitaTipo || 'Venda';
                 document.getElementById('modal-visita-datetime').textContent = `${formatarDataBR(lead.visitaData)} às ${lead.visitaHora || '--:--'}`;
                 document.getElementById('modal-visita-local').textContent = endVisita || 'Não informado';
                 
@@ -1372,6 +1401,30 @@
                 btn.addEventListener('click', (e) => {
                     const id = e.currentTarget.getAttribute('data-id');
                     abrirModalReagendarRapido(id);
+                });
+            });
+
+            // EVENTO DA NOVA COLUNA DE AÇÃO NA AGENDA
+            document.querySelectorAll('.select-acao-visita').forEach(sel => {
+                sel.addEventListener('change', async (e) => {
+                    const id = e.target.getAttribute('data-id');
+                    const novaAcao = e.target.value;
+
+                    if (novaAcao === 'Concluído') {
+                        if (confirm("Marcar esta visita como Concluída? Ela sairá da Agenda de Visitas.")) {
+                            await updateDoc(doc(db, "leads", id), {
+                                visitaTipo: 'Concluído',
+                                atualizadoEm: new Date().toISOString()
+                            });
+                        } else {
+                            renderizarDashboard();
+                        }
+                    } else {
+                        await updateDoc(doc(db, "leads", id), {
+                            visitaTipo: novaAcao,
+                            atualizadoEm: new Date().toISOString()
+                        });
+                    }
                 });
             });
 
@@ -1427,6 +1480,7 @@
 
                         chkAgendar.checked = lead.agendarVisita || false;
                         boxAgendamento.classList.toggle('hidden', !lead.agendarVisita);
+                        document.getElementById('visita-tipo').value = lead.visitaTipo || 'Venda';
                         document.getElementById('visita-data').value = lead.visitaData || '';
                         document.getElementById('visita-hora').value = lead.visitaHora || '';
                         document.getElementById('visita-endereco').value = lead.visitaEndereco || '';
@@ -1470,9 +1524,9 @@
         document.getElementById('filtro-agenda-mes').addEventListener('change', renderizarDashboard);
 
         function exportarTabelaParaCSV(leadsArray, nomeArquivo) {
-            let csv = '\uFEFFLead;Empresa;Endereco Lead;Valor;Data Cadastro;Data Conquista;Status;Data Visita;Endereco Visita\n';
+            let csv = '\uFEFFLead;Empresa;Endereco Lead;Valor;Data Cadastro;Data Conquista;Status;Tipo Visita;Data Visita;Endereco Visita\n';
             leadsArray.forEach(l => {
-                csv += `"${l.nome}";"${l.empresa || ''}";"${l.endereco || ''}";"${l.valor}";"${l.dataCadastro}";"${l.dataConquista || ''}";"${l.status}";"${l.visitaData || ''}";"${l.visitaEndereco || ''}"\n`;
+                csv += `"${l.nome}";"${l.empresa || ''}";"${l.endereco || ''}";"${l.valor}";"${l.dataCadastro}";"${l.dataConquista || ''}";"${l.status}";"${l.visitaTipo || ''}";"${l.visitaData || ''}";"${l.visitaEndereco || ''}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
@@ -1485,7 +1539,7 @@
 
         document.getElementById('btn-exportar-leads').addEventListener('click', () => exportarTabelaParaCSV(listaLeads, 'leads_vendas.csv'));
         document.getElementById('btn-exportar-agenda').addEventListener('click', () => {
-            const comVisita = listaLeads.filter(l => l.agendarVisita);
+            const comVisita = listaLeads.filter(l => l.agendarVisita && l.visitaTipo !== 'Concluído');
             exportarTabelaParaCSV(comVisita, 'agenda_visitas.csv');
         });
     </script>
