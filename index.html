@@ -267,7 +267,7 @@
                             <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
                         </select>
                     </div>
-                    <button id="btn-ordem-vendas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Recentes</button>
+                    <button id="btn-ordem-vendas" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded border font-semibold flex items-center gap-1 transition"><i class="fa-solid fa-sort-down"></i> Mais Próximas</button>
                     <button id="btn-exportar-leads" class="bg-teal-800 hover:bg-teal-900 text-white px-3 py-1 rounded font-bold transition"><i class="fa-solid fa-file-excel"></i> Exportar</button>
                 </div>
             </div>
@@ -460,7 +460,7 @@
         let tempoInatividade;
         let timerAutocomplete = null;
 
-        let ordemVendas = 'desc';
+        let ordemVendas = 'asc';
         let ordemVisitas = 'asc';
 
         const authContainer = document.getElementById('auth-container');
@@ -774,12 +774,14 @@
         navRecu.addEventListener('click', () => alternarAba('Recusado'));
         navVisitas.addEventListener('click', () => alternarAba('AgendaVisitas'));
 
+        // PADRONIZAÇÃO DO TEXTO DO BOTÃO DE ORDENAÇÃO DE LEADS
         document.getElementById('btn-ordem-vendas').addEventListener('click', (e) => {
-            ordemVendas = ordemVendas === 'desc' ? 'asc' : 'desc';
-            e.currentTarget.innerHTML = ordemVendas === 'desc' ? '<i class="fa-solid fa-sort-down"></i> Mais Recentes' : '<i class="fa-solid fa-sort-up"></i> Mais Antigos';
+            ordemVendas = ordemVendas === 'asc' ? 'desc' : 'asc';
+            e.currentTarget.innerHTML = ordemVendas === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
             renderizarDashboard();
         });
 
+        // PADRONIZAÇÃO DO TEXTO DO BOTÃO DE ORDENAÇÃO DE VISITAS
         document.getElementById('btn-ordem-visitas').addEventListener('click', (e) => {
             ordemVisitas = ordemVisitas === 'asc' ? 'desc' : 'asc';
             e.currentTarget.innerHTML = ordemVisitas === 'asc' ? '<i class="fa-solid fa-sort-down"></i> Mais Próximas' : '<i class="fa-solid fa-sort-up"></i> Mais Distantes';
@@ -1036,7 +1038,7 @@
                     dataB = b.visitaData ? `${b.visitaData}T${b.visitaHora || '00:00'}` : b.dataCadastro || '1970-01-01';
                 }
 
-                return ordemVendas === 'desc' ? dataB.localeCompare(dataA) : dataA.localeCompare(dataB);
+                return ordemVendas === 'asc' ? dataA.localeCompare(dataB) : dataB.localeCompare(dataA);
             });
 
             const badgeContador = document.getElementById('badge-contador-vendas');
