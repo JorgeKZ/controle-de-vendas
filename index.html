@@ -14,6 +14,7 @@
         .bg-brand-green { background-color: #0f766e; }
         .bg-brand-green:hover { background-color: #115e59; }
         
+        .status-prospeccao { background-color: #6366f1; color: #ffffff; font-weight: 600; }
         .status-qualificacao { background-color: #2563eb; color: #ffffff; font-weight: 600; }
         .status-negociacao { background-color: #d97706; color: #ffffff; font-weight: 600; }
         .status-quente { background-color: #f97316; color: #ffffff; font-weight: 600; }
@@ -127,16 +128,29 @@
             </div>
         </div>
 
-        <!-- BARRA DE NAVEGAÇÃO -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-            <button id="nav-btn-novo-lead" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90"><i class="fa-solid fa-plus-circle mr-1"></i>Novo Lead</button>
-            <button id="nav-btn-aba-todos" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-list text-slate-500 mr-1"></i>Todos</button>
-            <button id="nav-btn-vendas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-briefcase text-emerald-700 mr-1"></i>Carteira</button>
-            <button id="nav-btn-aba-quentes" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-orange-500 mr-1"></i>Quentes</button>
-            <button id="nav-btn-aba-qualificacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1"></i>Qualificação</button>
-            <button id="nav-btn-aba-negociacao" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-handshake text-amber-600 mr-1"></i>Em Negociação</button>
-            <button id="nav-btn-aba-recusados" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i>Recusado</button>
-            <button id="nav-btn-visitas" class="px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-1"></i>Agenda Visitas</button>
+        <!-- BARRA DE NAVEGAÇÃO REORGANIZADA -->
+        <div class="mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+            <!-- Botão do Topo (Novo Lead) -->
+            <div>
+                <button id="nav-btn-novo-lead" class="w-full px-4 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-sm"></i> Novo Lead
+                </button>
+            </div>
+
+            <!-- Botões em Grade 2 por linha -->
+            <div class="grid grid-cols-2 gap-2">
+                <button id="nav-btn-aba-todos" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-list text-slate-500 mr-1"></i>Todos</button>
+                <button id="nav-btn-vendas" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-briefcase text-emerald-700 mr-1"></i>Carteira</button>
+
+                <button id="nav-btn-aba-prospeccao" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-binoculars text-indigo-600 mr-1"></i>Prospecção</button>
+                <button id="nav-btn-aba-qualificacao" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1"></i>Qualificação</button>
+
+                <button id="nav-btn-aba-quentes" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-fire text-orange-500 mr-1"></i>Quentes</button>
+                <button id="nav-btn-aba-negociacao" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-handshake text-amber-600 mr-1"></i>Em Negociação</button>
+
+                <button id="nav-btn-aba-recusados" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i>Recusado</button>
+                <button id="nav-btn-visitas" class="px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-calendar-days text-teal-700 mr-1"></i>Agenda Visitas</button>
+            </div>
         </div>
 
         <!-- SEÇÃO OCULTÁVEL 1: FORMULÁRIO DE NOVO LEAD -->
@@ -197,6 +211,7 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status *</label>
                         <select id="lead-status" required class="w-full border rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-600 outline-none">
+                            <option value="Prospecção">Prospecção</option>
                             <option value="Qualificação">Qualificação</option>
                             <option value="Quente">Quente</option>
                             <option value="Em Negociação">Em Negociação</option>
@@ -500,8 +515,9 @@
         const navNovoLead = document.getElementById('nav-btn-novo-lead');
         const navTodos = document.getElementById('nav-btn-aba-todos');
         const navVendas = document.getElementById('nav-btn-vendas');
-        const navQuen = document.getElementById('nav-btn-aba-quentes');
+        const navProsp = document.getElementById('nav-btn-aba-prospeccao');
         const navQuali = document.getElementById('nav-btn-aba-qualificacao');
+        const navQuen = document.getElementById('nav-btn-aba-quentes');
         const navNego = document.getElementById('nav-btn-aba-negociacao');
         const navRecu = document.getElementById('nav-btn-aba-recusados');
         const navVisitas = document.getElementById('nav-btn-visitas');
@@ -707,6 +723,7 @@
         }
 
         function obterClasseStatus(status) {
+            if (status === 'Prospecção') return 'status-prospeccao';
             if (status === 'Qualificação') return 'status-qualificacao';
             if (status === 'Em Negociação') return 'status-negociacao';
             if (status === 'Quente') return 'status-quente';
@@ -753,10 +770,10 @@
 
             if (tipoFiltro === 'NovoLead') {
                 secFormLead.classList.remove('hidden');
-                navNovoLead.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-900 text-white ring-2 ring-teal-500";
+                navNovoLead.className = "w-full px-4 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-900 text-white ring-2 ring-teal-500 flex items-center justify-center gap-2";
             } else if (tipoFiltro === 'AgendaVisitas') {
                 secVisitas.classList.remove('hidden');
-                navVisitas.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
+                navVisitas.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
                 renderizarDashboard();
             } else {
                 secVendas.classList.remove('hidden');
@@ -766,26 +783,28 @@
         }
 
         function resetarEstiloBotoesNav() {
-            navNovoLead.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90";
-            [navTodos, navVendas, navQuen, navQuali, navNego, navRecu, navVisitas].forEach(b => {
-                b.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
+            navNovoLead.className = "w-full px-4 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-brand-green text-white hover:opacity-90 flex items-center justify-center gap-2";
+            [navTodos, navVendas, navProsp, navQuali, navQuen, navNego, navRecu, navVisitas].forEach(b => {
+                b.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-white text-slate-700 hover:bg-slate-50";
             });
         }
 
         function destacarBotaoAtivo(tipo) {
-            if (tipo === 'Todos') navTodos.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white";
-            else if (tipo === 'Conquista') navVendas.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-emerald-800 text-white";
-            else if (tipo === 'Quente') navQuen.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-orange-500 text-white";
-            else if (tipo === 'Qualificação') navQuali.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-blue-600 text-white";
-            else if (tipo === 'Em Negociação') navNego.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-amber-600 text-white";
-            else if (tipo === 'Recusado') navRecu.className = "px-2 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-rose-600 text-white";
+            if (tipo === 'Todos') navTodos.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-slate-700 text-white";
+            else if (tipo === 'Conquista') navVendas.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-emerald-800 text-white";
+            else if (tipo === 'Prospecção') navProsp.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-indigo-600 text-white";
+            else if (tipo === 'Qualificação') navQuali.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-blue-600 text-white";
+            else if (tipo === 'Quente') navQuen.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-orange-500 text-white";
+            else if (tipo === 'Em Negociação') navNego.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-amber-600 text-white";
+            else if (tipo === 'Recusado') navRecu.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-rose-600 text-white";
         }
 
         navNovoLead.addEventListener('click', () => alternarAba('NovoLead'));
         navTodos.addEventListener('click', () => alternarAba('Todos'));
         navVendas.addEventListener('click', () => alternarAba('Conquista'));
-        navQuen.addEventListener('click', () => alternarAba('Quente'));
+        navProsp.addEventListener('click', () => alternarAba('Prospecção'));
         navQuali.addEventListener('click', () => alternarAba('Qualificação'));
+        navQuen.addEventListener('click', () => alternarAba('Quente'));
         navNego.addEventListener('click', () => alternarAba('Em Negociação'));
         navRecu.addEventListener('click', () => alternarAba('Recusado'));
         navVisitas.addEventListener('click', () => alternarAba('AgendaVisitas'));
@@ -974,12 +993,13 @@
 
             if (secaoSelecionada === 'Todos') tituloSeccao.textContent = 'Todos os Leads';
             else if (secaoSelecionada === 'Conquista') tituloSeccao.textContent = 'Carteira';
+            else if (secaoSelecionada === 'Prospecção') tituloSeccao.textContent = 'Base de Prospecção';
             else if (secaoSelecionada === 'Qualificação') tituloSeccao.textContent = 'Base de Qualificação';
             else if (secaoSelecionada === 'Quente') tituloSeccao.textContent = 'Base de Leads Quentes';
             else if (secaoSelecionada === 'Em Negociação') tituloSeccao.textContent = 'Base Em Negociação';
             else if (secaoSelecionada === 'Recusado') tituloSeccao.textContent = 'Recusados';
 
-            if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
+            if (secaoSelecionada === 'Prospecção' || secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
                 theadLinha.innerHTML = `
                     <th class="p-3">Nome / CNPJ / CPF</th>
                     <th class="p-3">Endereço Lead</th>
@@ -1014,6 +1034,7 @@
 
             let leadsControleFiltrados = listaLeads.filter(l => {
                 if (secaoSelecionada === 'Conquista' && l.status !== 'Conquista') return false;
+                if (secaoSelecionada === 'Prospecção' && l.status !== 'Prospecção') return false;
                 if (secaoSelecionada === 'Qualificação' && l.status !== 'Qualificação') return false;
                 if (secaoSelecionada === 'Quente' && l.status !== 'Quente') return false;
                 if (secaoSelecionada === 'Em Negociação' && l.status !== 'Em Negociação') return false;
@@ -1024,7 +1045,7 @@
                 let dataRef = l.dataCadastro;
                 if (secaoSelecionada === 'Conquista') {
                     dataRef = l.dataConquista || l.dataCadastro;
-                } else if ((secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') && l.agendarVisita && l.visitaData) {
+                } else if ((secaoSelecionada === 'Prospecção' || secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') && l.agendarVisita && l.visitaData) {
                     dataRef = l.visitaData;
                 }
 
@@ -1050,7 +1071,7 @@
                 if (secaoSelecionada === 'Conquista') {
                     dataA = a.dataConquista || a.dataCadastro || '1970-01-01';
                     dataB = b.dataConquista || b.dataCadastro || '1970-01-01';
-                } else if ((secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') && (a.visitaData || b.visitaData)) {
+                } else if ((secaoSelecionada === 'Prospecção' || secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') && (a.visitaData || b.visitaData)) {
                     dataA = a.visitaData ? `${a.visitaData}T${a.visitaHora || '00:00'}` : a.dataCadastro || '1970-01-01';
                     dataB = b.visitaData ? `${b.visitaData}T${b.visitaHora || '00:00'}` : b.dataCadastro || '1970-01-01';
                 }
@@ -1072,7 +1093,7 @@
                 const urlWhats = criarLinkWhatsapp(l.whatsApp);
                 const urlMaps = criarLinkGoogleMaps(l.endereco);
 
-                if (secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
+                if (secaoSelecionada === 'Prospecção' || secaoSelecionada === 'Qualificação' || secaoSelecionada === 'Quente' || secaoSelecionada === 'Em Negociação') {
                     const temVisita = l.agendarVisita && l.visitaData;
                     tr.innerHTML = `
                         <td class="p-3">
@@ -1108,6 +1129,7 @@
                         </td>
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Prospecção" class="bg-white text-slate-800" ${l.status === 'Prospecção' ? 'selected' : ''}>Prospecção</option>
                                 <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
                                 <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
                                 <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
@@ -1135,6 +1157,7 @@
                         <td class="p-3 text-emerald-700 font-bold"><i class="fa-solid fa-trophy text-emerald-600 text-xs"></i> ${formatarDataBR(l.dataConquista) || '--'}</td>
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Prospecção" class="bg-white text-slate-800" ${l.status === 'Prospecção' ? 'selected' : ''}>Prospecção</option>
                                 <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
                                 <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
                                 <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
@@ -1162,6 +1185,7 @@
                         <td class="p-3 text-slate-500">${formatarDataBR(l.dataCadastro)}</td>
                         <td class="p-3">
                             <select data-id="${l.id}" class="select-status border rounded px-2 py-1 text-xs font-medium focus:outline-none ${classeCorStatus}">
+                                <option value="Prospecção" class="bg-white text-slate-800" ${l.status === 'Prospecção' ? 'selected' : ''}>Prospecção</option>
                                 <option value="Qualificação" class="bg-white text-slate-800" ${l.status === 'Qualificação' ? 'selected' : ''}>Qualificação</option>
                                 <option value="Quente" class="bg-white text-slate-800" ${l.status === 'Quente' ? 'selected' : ''}>Quente</option>
                                 <option value="Em Negociação" class="bg-white text-slate-800" ${l.status === 'Em Negociação' ? 'selected' : ''}>Em Negociação</option>
@@ -1190,7 +1214,6 @@
                 let totalTpvVisitas = 0;
 
                 let leadsVisitasFiltrados = listaLeads.filter(l => {
-                    // EXCLUI DA AGENDA SE NÃO TIVER VISITA AGENDADA OU SE ESTIVER COMO CONCLUÍDO
                     if(!l.agendarVisita || !l.visitaData || l.visitaTipo === 'Concluído') return false;
                     if(fVisitasBusca && !(l.nome || '').toLowerCase().includes(fVisitasBusca)) return false;
                     
@@ -1404,7 +1427,6 @@
                 });
             });
 
-            // EVENTO DA NOVA COLUNA DE AÇÃO NA AGENDA
             document.querySelectorAll('.select-acao-visita').forEach(sel => {
                 sel.addEventListener('change', async (e) => {
                     const id = e.target.getAttribute('data-id');
