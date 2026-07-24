@@ -771,14 +771,17 @@
             if (tipoFiltro === 'NovoLead') {
                 secFormLead.classList.remove('hidden');
                 navNovoLead.className = "w-full px-4 py-3 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-900 text-white ring-2 ring-teal-500 flex items-center justify-center gap-2";
+                setTimeout(() => secFormLead.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
             } else if (tipoFiltro === 'AgendaVisitas') {
                 secVisitas.classList.remove('hidden');
                 navVisitas.className = "px-2 py-2.5 rounded-lg font-bold text-xs text-center border transition shadow-sm bg-teal-700 text-white";
                 renderizarDashboard();
+                setTimeout(() => secVisitas.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
             } else {
                 secVendas.classList.remove('hidden');
                 destacarBotaoAtivo(tipoFiltro);
                 renderizarDashboard();
+                setTimeout(() => secVendas.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
             }
         }
 
