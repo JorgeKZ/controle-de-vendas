@@ -37,7 +37,13 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold mb-1">Senha</label>
-                <input type="password" id="auth-senha" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600">
+                <!-- CAMPO DE SENHA COM BOTÃO DE VER/OCULTAR SENHA -->
+                <div class="relative">
+                    <input type="password" id="auth-senha" required class="w-full pl-3 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    <button type="button" id="btn-toggle-senha" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none" title="Mostrar/Ocultar Senha">
+                        <i class="fa-solid fa-eye" id="icone-toggle-senha"></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" id="btn-auth-principal" class="w-full bg-brand-green text-white py-2 rounded-lg font-bold">Entrar</button>
         </form>
@@ -537,6 +543,23 @@
         const boxFiltroGerente = document.getElementById('box-filtro-gerente');
         const selectFiltroVendedor = document.getElementById('select-filtro-vendedor');
 
+        // LÓGICA DE VISUALIZAR/OCULTAR SENHA NO LOGIN
+        const inputSenha = document.getElementById('auth-senha');
+        const btnToggleSenha = document.getElementById('btn-toggle-senha');
+        const iconeToggleSenha = document.getElementById('icone-toggle-senha');
+
+        btnToggleSenha.addEventListener('click', () => {
+            if (inputSenha.type === 'password') {
+                inputSenha.type = 'text';
+                iconeToggleSenha.classList.remove('fa-eye');
+                iconeToggleSenha.classList.add('fa-eye-slash');
+            } else {
+                inputSenha.type = 'password';
+                iconeToggleSenha.classList.remove('fa-eye-slash');
+                iconeToggleSenha.classList.add('fa-eye');
+            }
+        });
+
         function extrairNumeroDigitado(texto) {
             const match = texto.match(/(?:,|\s|nº|n°|n)?\s*(\d+)(?:\s*-[a-zA-Z0-9]+)?\b/i);
             return match ? match[1] : null;
@@ -859,7 +882,6 @@
                     await signInWithEmailAndPassword(auth, email, senha);
                 } else {
                     const res = await createUserWithEmailAndPassword(auth, email, senha);
-                    // Salva o perfil do usuário como 'vendedor' por padrão
                     await setDoc(doc(db, "usuarios", res.user.uid), {
                         email: email,
                         role: 'vendedor',
@@ -878,7 +900,6 @@
                 usuarioAtual = user;
                 document.getElementById('user-display-email').textContent = user.email;
                 
-                // Carregar perfil do usuário para verificar Role (Gerente ou Vendedor)
                 await carregarPerfilUsuario(user);
 
                 authContainer.classList.add('hidden');
@@ -911,7 +932,6 @@
                 if (docSnap.exists()) {
                     perfilUsuario = docSnap.data();
                 } else {
-                    // Se não tiver documento, cria como vendedor
                     perfilUsuario = { role: 'vendedor', email: user.email };
                     await setDoc(docRef, { email: user.email, role: 'vendedor' });
                 }
@@ -962,10 +982,8 @@
 
             let q;
             if (perfilUsuario.role === 'gerente') {
-                // Gerente tem consulta irrestrita
                 q = collection(db, "leads");
             } else {
-                // Vendedor só ouve os seus próprios leads
                 q = query(collection(db, "leads"), where("uid", "==", usuarioAtual.uid));
             }
 
