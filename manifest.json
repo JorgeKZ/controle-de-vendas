@@ -1,14 +1,21 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
-  "name": "Sales Planning",
-  "orientation": "any",
-  "scope": "/controle-de-vendas/",
-  "short_name": "SPlanning",
+  "name": "CRM de Campo",
+  "short_name": "CRM Campo",
   "start_url": "/controle-de-vendas/",
-  "theme_color": "#ffffff",
-  "id": "crm-de-campo",
-  "description": "Controle de vendas e visitas de campo.",
-  "lang": "pt"
+  "scope": "/controle-de-vendas/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/jorgekz/controle-de-vendas/main/appstore-images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/jorgekz/controle-de-vendas/main/appstore-images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
