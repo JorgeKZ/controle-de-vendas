@@ -1,0 +1,14 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Sales Planning",
+  "orientation": "any",
+  "scope": "/controle-de-vendas/",
+  "short_name": "SPlanning",
+  "start_url": "/controle-de-vendas/",
+  "theme_color": "#ffffff",
+  "id": "crm-de-campo",
+  "description": "Controle de vendas e visitas de campo.",
+  "lang": "pt"
+}
